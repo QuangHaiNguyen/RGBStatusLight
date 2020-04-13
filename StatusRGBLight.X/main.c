@@ -230,10 +230,11 @@ void Test_WS2812(void)
 {
     uint16_t * ptr_test = NULL;
     uint16_t led_position = 1;
-    if(WS2812_OK != WS2812_Init(3, &ptr_test)){
+    if(WS2812_OK != WS2812_Init(3)){
         PRINT_ERROR("%s", "Cannot initialize LED component");
         return;
     }
+    WS2812_GetPointerToRGBData(&ptr_test);
     WS2812_SetColor(led_position, 255, 0 , 0);
     for(uint8_t i = 0; i < 8; i++){
         PRINT_DEBUG("RED   pos[%d]:bit[%d]:%d\n",led_position, i,  *(ptr_test + 60 + led_position * 24 + i));
@@ -242,7 +243,6 @@ void Test_WS2812(void)
     }
     return;
 }
-
 #endif
 /**
     End of File

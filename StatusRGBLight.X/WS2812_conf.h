@@ -1,8 +1,24 @@
-/* 
- * File:   WS2812_conf.h
- * Author: haing
- *
- * Created on April 13, 2020, 3:36 PM
+/****************************************************************************
+* Title                 :   WS2812 Configure File
+* Filename              :   WS2812_conf.h
+* Author                :   Quang Hai Nguyen
+* Origin Date           :   13.04.2020
+* Version               :   0.0.99
+*
+*****************************************************************************/
+
+/*************** INTERFACE CHANGE LIST **************************************
+*
+*  Date         Version     Author              Description 
+*  13.04.2020   1.0.0       Quang Hai Nguyen    Interface Created.
+*
+*****************************************************************************/
+/** @file   WS2812_conf.h
+ *  @brief  This file provides hardware configuration for WS2812 module  
+ * 
+ * There are many implementations for the WS2812 RGB strip LED, e.g. using bit 
+ * banging, SPI or PWM. This file allows the user to choose/add the 
+ * implementation on a specific hardware  
  */
 
 #ifndef WS2812_CONF_H

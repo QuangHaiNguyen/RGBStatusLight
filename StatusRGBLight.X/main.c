@@ -3,43 +3,67 @@
 #include <stdio.h>
 #include <string.h>
 #include <util/delay.h>
-#include "cli.h"
-#include "led.h"
 #include "debug.h"
+#include "led.h"
 
+#define CLI_EN          0
+#define WIFI_EN         0
+#define TEST_WS2812     1
+
+#define BIT_1       3750
+#define BIT_0       1875
+
+#if WIFI_EN
 #include "mcc_generated_files/winc/m2m/m2m_wifi.h"
 #include "mcc_generated_files/winc/m2m/m2m_types.h"
 #include "common/winc_defines.h"
 #include "driver/winc_adapter.h"
+#endif
 
-#define CLI_EN      0
-#define WIFI_EN     0
-#define BIT_1       3750
-#define BIT_0       1875
+#if CLI_EN
+#include "cli.h"
+#endif 
+
+#if TEST_WS2812
+#include "WS2812.h"
+#include "include/winc_legacy.h"
+#endif
+
+
 
 void Test1(void);
 void Test2(void);
 void Test3(void);
+
 void UART2_RXCallback(void);
+
+#if WIFI_EN
 void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
+#endif
+
+#if TEST_WS2812
+void Test_WS2812(void);
+#endif
+
 void CaptureCompareCallback(void);
 void OverflowCallback(void);
-static char ch;
-CLI_Status cli_stt;
+
 bool toogle_flag = true;
 
-
+#if CLI_EN
+static char ch;
+CLI_Status cli_stt;
 command_t cmd_table[3] = {
         {"test_1", Test1},
 		{"test_2", Test2},
         {"test_3", Test3},
 };
+#endif
+
 uint8_t version;
 uint8_t sub_version;
 uint8_t ssub_version;
 Led_Comp led; 
-tstrWifiInitParam wifi_param;
-    
 
 /*
     Main application
@@ -48,7 +72,7 @@ int main(void)
 {
     /* Initializes MCU, drivers and middleware */
     SYSTEM_Initialize();
-    winc_adapter_init();
+    
     PRINT_INFO("%s", "********************************************\n");
     PRINT_INFO("%s", "System initialized\n");
     USART2_SetISRCb(UART2_RXCallback, USART2_RX_CB);
@@ -69,8 +93,12 @@ int main(void)
     TCA0_SetCMP0IsrCallback((TCA0_cb_t)CaptureCompareCallback);
     TCA0_SetOVFIsrCallback((TCA0_cb_t)OverflowCallback);
     PRINT_DEBUG("%s", "PWM Start\n");
-
+#if TEST_WS2812
+    Test_WS2812();
+#endif
 #if WIFI_EN
+    tstrWifiInitParam wifi_param;
+    winc_adapter_init();
     wifi_param.pfAppWifiCb = Wifi_EventCallback;
 
     if(!m2m_wifi_init(&wifi_param)){
@@ -106,6 +134,7 @@ int main(void)
     }
 }
 
+#if WIFI_EN
 void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
 {
     tstrM2MProvisionInfo *pstrProvInfo;
@@ -155,6 +184,7 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
             break;
     }
 }
+#endif
 
 void Test1(void)
 {
@@ -171,9 +201,11 @@ void Test3(void)
 
 void UART2_RXCallback(void)
 {
+#if CLI_EN
     ch = USART2.RXDATAL;
     USART2.TXDATAL = ch;
     CLI_GetChar(ch);
+#endif
 }
 
 void CaptureCompareCallback(void)
@@ -192,6 +224,26 @@ void OverflowCallback(void)
         toogle_flag = true;
     }
 }
+
+#if TEST_WS2812
+void Test_WS2812(void)
+{
+    uint16_t * ptr_test = NULL;
+    uint16_t led_position = 1;
+    if(WS2812_OK != WS2812_Init(3, &ptr_test)){
+        PRINT_ERROR("%s", "Cannot initialize LED component");
+        return;
+    }
+    WS2812_SetColor(led_position, 255, 0 , 0);
+    for(uint8_t i = 0; i < 8; i++){
+        PRINT_DEBUG("RED   pos[%d]:bit[%d]:%d\n",led_position, i,  *(ptr_test + 60 + led_position * 24 + i));
+        PRINT_DEBUG("GREEN pos[%d]:bit[%d]:%d\n",led_position, i,  *(ptr_test + 60 + led_position * 24 + i + 8));
+        PRINT_DEBUG("BLUE  pos[%d]:bit[%d]:%d\n",led_position, i,  *(ptr_test + 60 + led_position * 24 + i + 16));
+    }
+    return;
+}
+
+#endif
 /**
     End of File
 */

@@ -13,15 +13,20 @@
 #include "driver/winc_adapter.h"
 
 #define CLI_EN      0
+#define WIFI_EN     0
+#define BIT_1       3750
+#define BIT_0       1875
 
 void Test1(void);
 void Test2(void);
 void Test3(void);
 void UART2_RXCallback(void);
 void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
-
+void CaptureCompareCallback(void);
+void OverflowCallback(void);
 static char ch;
 CLI_Status cli_stt;
+bool toogle_flag = true;
 
 
 command_t cmd_table[3] = {
@@ -44,11 +49,9 @@ int main(void)
     /* Initializes MCU, drivers and middleware */
     SYSTEM_Initialize();
     winc_adapter_init();
+    PRINT_INFO("%s", "********************************************\n");
     PRINT_INFO("%s", "System initialized\n");
     USART2_SetISRCb(UART2_RXCallback, USART2_RX_CB);
-    
-    
-    
     
 #if CLI_EN
     CLI_Init(cmd_table, 3);
@@ -61,7 +64,15 @@ int main(void)
     PRINT_INFO("LED version %02d.%02d.%02d\n", version, sub_version,ssub_version);
     PRINT_INFO("number of available Led: %d\n", led.NumOfLed());
     
+    TCA0_EnableInterrupt();
+    TCA0.SINGLE.CMP0 = BIT_1;
+    TCA0_SetCMP0IsrCallback((TCA0_cb_t)CaptureCompareCallback);
+    TCA0_SetOVFIsrCallback((TCA0_cb_t)OverflowCallback);
+    PRINT_DEBUG("%s", "PWM Start\n");
+
+#if WIFI_EN
     wifi_param.pfAppWifiCb = Wifi_EventCallback;
+
     if(!m2m_wifi_init(&wifi_param)){
         
         tstrM2MAPConfig apConfig = {
@@ -78,9 +89,14 @@ int main(void)
         m2m_wifi_start_provision_mode(&apConfig, "atmelwincconfig.com", 1);
     }
     PRINT_DEBUG("%s", "AP Started\n");
+#endif
     /* Replace with your application code */
     while (1){
+
+#if WIFI_EN
         m2m_wifi_handle_events(NULL);
+#endif
+        
 #if CLI_EN
         cli_stt = CLI_ProccessCommand();
         if(CLI_CMD_NOTFOUND == cli_stt){
@@ -118,7 +134,6 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
             {
                 tstrM2MConnInfo *pstrInfo = (tstrM2MConnInfo*)pvMsg;
                 PRINT_DEBUG("Connected to: %s\n", pstrInfo->acSSID);
-                PRINT_DEBUG("IP; %d:%d:%d:%d\n", pstrInfo->au8IPAddr[0], pstrInfo->au8IPAddr[1], pstrInfo->au8IPAddr[2], pstrInfo->au8IPAddr[3]);
             }
             break;
         case M2M_WIFI_RESP_PROVISION_INFO:           
@@ -136,7 +151,7 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
             break;
         
         default:
-            PRINT_ERROR("%s", "Unknown/unhandled wifi event\n");
+            PRINT_DEBUG("%s", "Unknown/unhandled wifi event\n");
             break;
     }
 }
@@ -159,6 +174,23 @@ void UART2_RXCallback(void)
     ch = USART2.RXDATAL;
     USART2.TXDATAL = ch;
     CLI_GetChar(ch);
+}
+
+void CaptureCompareCallback(void)
+{
+    
+}
+
+void OverflowCallback(void)
+{
+    if(toogle_flag){
+        TCA0.SINGLE.CMP0 = BIT_0;
+        toogle_flag = false;
+    }
+    else{
+        TCA0.SINGLE.CMP0 = BIT_1;
+        toogle_flag = true;
+    }
 }
 /**
     End of File

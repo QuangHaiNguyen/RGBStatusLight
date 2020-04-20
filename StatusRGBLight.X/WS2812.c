@@ -21,8 +21,10 @@
 * Includes
 *******************************************************************************/
 #include "WS2812.h"
+#include "include/winc_legacy.h"
 #include <string.h>
 #include <stdio.h>
+
 
 /******************************************************************************
 * Module Typedefs
@@ -39,7 +41,6 @@ uint16_t num_led;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-//None
 
 /******************************************************************************
 * Function Definitions
@@ -94,6 +95,8 @@ WS2812_Status WS2812_Init(uint16_t num_of_led)
     //initialize underlying hardware
 #ifdef USING_AVR4808
     //InitHardware();
+    ATMEGA4808_PWM_Init();
+    ATMEGA4808_PWM_GetRGBDataInfo(&ptr_led_buff, led_buff_size);
 #endif
     
     //Set value to 0;
@@ -143,6 +146,7 @@ WS2812_Status WS2812_DeInit(void)
     
     //de-initialize underlying hardware
 #ifdef USING_AVR4808
+    ATMEGA4808_PWM_DeInit();
     //InitHardware();
 #endif
     return WS2812_OK;
@@ -192,8 +196,8 @@ WS2812_Status WS2812_SetColor(uint16_t position, uint8_t r, uint8_t g, uint8_t b
      */
     for(uint8_t i = 0; i < 8; i++)
     {
-        ptr_led_buff[RESET_TIME + position * 24 + i] =      (r >> i) & 1 ?  BIT_1 : BIT_0;
-        ptr_led_buff[RESET_TIME + position * 24 + i + 8] =  (g >> i) & 1 ?  BIT_1 : BIT_0;
+        ptr_led_buff[RESET_TIME + position * 24 + i] =      (g >> i) & 1 ?  BIT_1 : BIT_0;
+        ptr_led_buff[RESET_TIME + position * 24 + i + 8] =  (r >> i) & 1 ?  BIT_1 : BIT_0;
         ptr_led_buff[RESET_TIME + position * 24 + i + 16] = (b >> i) & 1 ?  BIT_1 : BIT_0;
     }
     return WS2812_OK;
@@ -280,7 +284,9 @@ WS2812_Status WS2812_Update(void)
     //run underlying hardware
 #ifdef USING_AVR4808
     //Hardware_SendDataToLED();
+    ATMEGA4808_PWM_Start();
 #endif
+
     return WS2812_OK;
 }
 
@@ -318,7 +324,7 @@ WS2812_Status WS2812_Update(void)
 WS2812_Status WS2812_LedOff(void)
 {
     //set color to all LEDs, don't touch the reset value (always 0)
-    for(uint16_t i = 0; i < led_buff_size - RESET_TIME; i++){
+    for(uint16_t i = 0; i < num_led; i++){
         WS2812_SetColor(i, 0, 0, 0);
     }
     return WS2812_OK;
@@ -364,4 +370,5 @@ WS2812_Status WS2812_GetPointerToRGBData(uint16_t **ptr)
     *ptr = ptr_led_buff;
     return WS2812_OK;
 }
+
 /*** End of File **************************************************************/

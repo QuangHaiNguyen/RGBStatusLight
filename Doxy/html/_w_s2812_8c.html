@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('_w_s2812_8c.html',''); initResizable()
 <p>This is the source file for WS2812 module.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="_w_s2812_8h_source.html">WS2812.h</a>&quot;</code><br />
+<code>#include &quot;include/winc_legacy.h&quot;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
 </div><table class="memberdecls">
@@ -195,7 +196,8 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_led</b></td><
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Status code</dd></dl>
-<p><b>Example</b> Example: </p><div class="fragment"><div class="line">uintt16_t *ptr_to_buffer = NULL;</div>
+<p><b>Example</b> Example: </p><div class="fragment"><div class="line">uint16_t *ptr_to_buffer = NULL;</div>
+<div class="line"> </div>
 <div class="line">  <a class="code" href="_w_s2812_8c.html#af709ba82c9a1449861efcce3b20c470f">WS2812_GetPointerToRGBData</a>(&amp;ptr_to_buffer);</div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="_w_s2812_8c.html#a6739f8b5394acedd5d922456c01c3108">WS2812_Init</a></dd></dl>
 <p><br  />
@@ -237,9 +239,7 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_led</b></td><
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Status code</dd></dl>
-<p><b>Example</b> Example: </p><div class="fragment"><div class="line">uint16_t *ptr_RGB_buffer</div>
-<div class="line"> </div>
-<div class="line"><a class="code" href="_w_s2812_8c.html#a6739f8b5394acedd5d922456c01c3108">WS2812_Init</a>(10);</div>
+<p><b>Example</b> Example: </p><div class="fragment"><div class="line"><a class="code" href="_w_s2812_8c.html#a6739f8b5394acedd5d922456c01c3108">WS2812_Init</a>(10);</div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="_w_s2812_8c.html#a6739f8b5394acedd5d922456c01c3108">WS2812_Init</a></dd></dl>
 <p><br  />
 <b> - HISTORY OF CHANGES - </b></p>
@@ -480,12 +480,12 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_led</b></td><
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="a_w_s2812_8c_html_a0e851b8993b7f8688827bb84531c46ac"><div class="ttname"><a href="_w_s2812_8c.html#a0e851b8993b7f8688827bb84531c46ac">WS2812_DeInit</a></div><div class="ttdeci">WS2812_Status WS2812_DeInit(void)</div><div class="ttdef"><b>Definition:</b> WS2812.c:138</div></div>
-<div class="ttc" id="a_w_s2812_8c_html_a0743543f83408041d77b29f18ff61f21"><div class="ttname"><a href="_w_s2812_8c.html#a0743543f83408041d77b29f18ff61f21">WS2812_Update</a></div><div class="ttdeci">WS2812_Status WS2812_Update(void)</div><div class="ttdef"><b>Definition:</b> WS2812.c:280</div></div>
-<div class="ttc" id="a_w_s2812_8c_html_a425bd2913bb27a55dd18356a1e296346"><div class="ttname"><a href="_w_s2812_8c.html#a425bd2913bb27a55dd18356a1e296346">WS2812_SetColorAll</a></div><div class="ttdeci">WS2812_Status WS2812_SetColorAll(uint8_t r, uint8_t g, uint8_t b)</div><div class="ttdef"><b>Definition:</b> WS2812.c:238</div></div>
-<div class="ttc" id="a_w_s2812_8c_html_a6739f8b5394acedd5d922456c01c3108"><div class="ttname"><a href="_w_s2812_8c.html#a6739f8b5394acedd5d922456c01c3108">WS2812_Init</a></div><div class="ttdeci">WS2812_Status WS2812_Init(uint16_t num_of_led)</div><div class="ttdef"><b>Definition:</b> WS2812.c:81</div></div>
-<div class="ttc" id="a_w_s2812_8c_html_af709ba82c9a1449861efcce3b20c470f"><div class="ttname"><a href="_w_s2812_8c.html#af709ba82c9a1449861efcce3b20c470f">WS2812_GetPointerToRGBData</a></div><div class="ttdeci">WS2812_Status WS2812_GetPointerToRGBData(uint16_t **ptr)</div><div class="ttdef"><b>Definition:</b> WS2812.c:360</div></div>
-<div class="ttc" id="a_w_s2812_8c_html_a0dbf81b6f6c7027136cc8c93b2065948"><div class="ttname"><a href="_w_s2812_8c.html#a0dbf81b6f6c7027136cc8c93b2065948">WS2812_SetColor</a></div><div class="ttdeci">WS2812_Status WS2812_SetColor(uint16_t position, uint8_t r, uint8_t g, uint8_t b)</div><div class="ttdef"><b>Definition:</b> WS2812.c:188</div></div>
+<div class="ttc" id="a_w_s2812_8c_html_a0e851b8993b7f8688827bb84531c46ac"><div class="ttname"><a href="_w_s2812_8c.html#a0e851b8993b7f8688827bb84531c46ac">WS2812_DeInit</a></div><div class="ttdeci">WS2812_Status WS2812_DeInit(void)</div><div class="ttdef"><b>Definition:</b> WS2812.c:139</div></div>
+<div class="ttc" id="a_w_s2812_8c_html_a0743543f83408041d77b29f18ff61f21"><div class="ttname"><a href="_w_s2812_8c.html#a0743543f83408041d77b29f18ff61f21">WS2812_Update</a></div><div class="ttdeci">WS2812_Status WS2812_Update(void)</div><div class="ttdef"><b>Definition:</b> WS2812.c:282</div></div>
+<div class="ttc" id="a_w_s2812_8c_html_a425bd2913bb27a55dd18356a1e296346"><div class="ttname"><a href="_w_s2812_8c.html#a425bd2913bb27a55dd18356a1e296346">WS2812_SetColorAll</a></div><div class="ttdeci">WS2812_Status WS2812_SetColorAll(uint8_t r, uint8_t g, uint8_t b)</div><div class="ttdef"><b>Definition:</b> WS2812.c:240</div></div>
+<div class="ttc" id="a_w_s2812_8c_html_a6739f8b5394acedd5d922456c01c3108"><div class="ttname"><a href="_w_s2812_8c.html#a6739f8b5394acedd5d922456c01c3108">WS2812_Init</a></div><div class="ttdeci">WS2812_Status WS2812_Init(uint16_t num_of_led)</div><div class="ttdef"><b>Definition:</b> WS2812.c:80</div></div>
+<div class="ttc" id="a_w_s2812_8c_html_af709ba82c9a1449861efcce3b20c470f"><div class="ttname"><a href="_w_s2812_8c.html#af709ba82c9a1449861efcce3b20c470f">WS2812_GetPointerToRGBData</a></div><div class="ttdeci">WS2812_Status WS2812_GetPointerToRGBData(uint16_t **ptr)</div><div class="ttdef"><b>Definition:</b> WS2812.c:365</div></div>
+<div class="ttc" id="a_w_s2812_8c_html_a0dbf81b6f6c7027136cc8c93b2065948"><div class="ttname"><a href="_w_s2812_8c.html#a0dbf81b6f6c7027136cc8c93b2065948">WS2812_SetColor</a></div><div class="ttdeci">WS2812_Status WS2812_SetColor(uint16_t position, uint8_t r, uint8_t g, uint8_t b)</div><div class="ttdef"><b>Definition:</b> WS2812.c:190</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

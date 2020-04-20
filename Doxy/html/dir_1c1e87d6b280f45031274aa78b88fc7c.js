@@ -1,6 +1,7 @@
 var dir_1c1e87d6b280f45031274aa78b88fc7c =
 [
-    [ "atmega4808_pwm.h", "atmega4808__pwm_8h_source.html", null ],
+    [ "atmega4808_pwm.c", "atmega4808__pwm_8c.html", "atmega4808__pwm_8c" ],
+    [ "atmega4808_pwm.h", "atmega4808__pwm_8h.html", "atmega4808__pwm_8h" ],
     [ "cli.h", "cli_8h_source.html", null ],
     [ "debug.h", "debug_8h_source.html", null ],
     [ "led.h", "led_8h_source.html", null ],

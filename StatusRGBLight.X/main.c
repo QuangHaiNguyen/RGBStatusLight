@@ -10,8 +10,7 @@
 #define WIFI_EN         0
 #define TEST_WS2812     1
 
-#define BIT_1       3750
-#define BIT_0       1875
+
 
 #if WIFI_EN
 #include "mcc_generated_files/winc/m2m/m2m_wifi.h"
@@ -30,13 +29,6 @@
 #endif
 
 
-
-void Test1(void);
-void Test2(void);
-void Test3(void);
-
-void UART2_RXCallback(void);
-
 #if WIFI_EN
 void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
 #endif
@@ -44,11 +36,6 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
 #if TEST_WS2812
 void Test_WS2812(void);
 #endif
-
-void CaptureCompareCallback(void);
-void OverflowCallback(void);
-
-bool toogle_flag = true;
 
 #if CLI_EN
 static char ch;
@@ -58,13 +45,21 @@ command_t cmd_table[3] = {
 		{"test_2", Test2},
         {"test_3", Test3},
 };
+void Test1(void);
+void Test2(void);
+void Test3(void);
 #endif
+
+
+void UART2_RXCallback(void);
+void SW1_InterruptHandler(void);
+void SW0_InterruptHandler(void);
 
 uint8_t version;
 uint8_t sub_version;
 uint8_t ssub_version;
 Led_Comp led; 
-
+bool flag = false;
 /*
     Main application
 */
@@ -88,14 +83,13 @@ int main(void)
     PRINT_INFO("LED version %02d.%02d.%02d\n", version, sub_version,ssub_version);
     PRINT_INFO("number of available Led: %d\n", led.NumOfLed());
     
-    TCA0_EnableInterrupt();
-    TCA0.SINGLE.CMP0 = BIT_1;
-    TCA0_SetCMP0IsrCallback((TCA0_cb_t)CaptureCompareCallback);
-    TCA0_SetOVFIsrCallback((TCA0_cb_t)OverflowCallback);
-    PRINT_DEBUG("%s", "PWM Start\n");
+    PORTF_SW1_SetInterruptHandler(SW1_InterruptHandler);
+    PORTF_SW0_SetInterruptHandler(SW0_InterruptHandler);
+    
 #if TEST_WS2812
     Test_WS2812();
 #endif
+
 #if WIFI_EN
     tstrWifiInitParam wifi_param;
     winc_adapter_init();
@@ -119,8 +113,10 @@ int main(void)
     PRINT_DEBUG("%s", "AP Started\n");
 #endif
     /* Replace with your application code */
+    
     while (1){
-
+        //TCA0.SINGLE.CTRLA |= (1 << TCA_SINGLE_ENABLE_bp);
+        //DELAY_milliseconds(1);
 #if WIFI_EN
         m2m_wifi_handle_events(NULL);
 #endif
@@ -186,6 +182,7 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
 }
 #endif
 
+#if CLI_EN
 void Test1(void)
 {
     printf("This is test 1\n");
@@ -198,6 +195,32 @@ void Test3(void)
 {
     printf("This is test 3\n");
 }
+#endif
+
+#if TEST_WS2812
+void Test_WS2812(void)
+{
+    if(WS2812_OK != WS2812_Init(20)){
+        PRINT_ERROR("%s", "Cannot initialize LED component");
+        return;
+    }
+    WS2812_LedOff();
+    WS2812_Update();
+    while(1)
+    {
+        WS2812_SetColorAll(255,0,0);
+        WS2812_Update();
+        DELAY_milliseconds(500);
+        WS2812_SetColorAll(0,255,0);
+        WS2812_Update();
+        DELAY_milliseconds(500);
+        WS2812_SetColorAll(0,0,255);
+        WS2812_Update();
+        DELAY_milliseconds(500);
+    }
+}
+#endif
+
 
 void UART2_RXCallback(void)
 {
@@ -208,42 +231,17 @@ void UART2_RXCallback(void)
 #endif
 }
 
-void CaptureCompareCallback(void)
+
+void SW1_InterruptHandler(void)
 {
-    
+    //led.LED_SetHigh(BLUE_LED);
+}
+void SW0_InterruptHandler(void)
+{
+    //led.LED_SetLow(BLUE_LED);
 }
 
-void OverflowCallback(void)
-{
-    if(toogle_flag){
-        TCA0.SINGLE.CMP0 = BIT_0;
-        toogle_flag = false;
-    }
-    else{
-        TCA0.SINGLE.CMP0 = BIT_1;
-        toogle_flag = true;
-    }
-}
 
-#if TEST_WS2812
-void Test_WS2812(void)
-{
-    uint16_t * ptr_test = NULL;
-    uint16_t led_position = 1;
-    if(WS2812_OK != WS2812_Init(3)){
-        PRINT_ERROR("%s", "Cannot initialize LED component");
-        return;
-    }
-    WS2812_GetPointerToRGBData(&ptr_test);
-    WS2812_SetColor(led_position, 255, 0 , 0);
-    for(uint8_t i = 0; i < 8; i++){
-        PRINT_DEBUG("RED   pos[%d]:bit[%d]:%d\n",led_position, i,  *(ptr_test + 60 + led_position * 24 + i));
-        PRINT_DEBUG("GREEN pos[%d]:bit[%d]:%d\n",led_position, i,  *(ptr_test + 60 + led_position * 24 + i + 8));
-        PRINT_DEBUG("BLUE  pos[%d]:bit[%d]:%d\n",led_position, i,  *(ptr_test + 60 + led_position * 24 + i + 16));
-    }
-    return;
-}
-#endif
 /**
     End of File
 */

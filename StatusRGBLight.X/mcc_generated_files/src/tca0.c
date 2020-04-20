@@ -105,7 +105,7 @@ ISR(TCA0_CMP2_vect)
     
     TCA0.SINGLE.INTFLAGS = TCA_SINGLE_CMP2_bm;
 }
-
+/*
 ISR(TCA0_OVF_vect)
 {
     if (TCA0_OVF_isr_cb != NULL)
@@ -113,7 +113,7 @@ ISR(TCA0_OVF_vect)
     
     TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;
 }
-
+*/
 
 /**
  * \brief Initialize TCA interface
@@ -166,13 +166,13 @@ int8_t TCA0_Initialize()
     TCA0.SINGLE.INTFLAGS = 0x00;
 
     //Period
-    TCA0.SINGLE.PER = 21875;
-    
+    TCA0.SINGLE.PER = 0x2B;
+
     //Temporary data for 16-bit Access
     TCA0.SINGLE.TEMP = 0x00;
 
-    //CLKSEL DIV1; ENABLE enabled; 
-    TCA0.SINGLE.CTRLA = 0x01;
+    //CLKSEL DIV2; ENABLE disabled; 
+    TCA0.SINGLE.CTRLA = 0x02;
 
     return 0;
 }

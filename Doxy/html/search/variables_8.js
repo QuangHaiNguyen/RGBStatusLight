@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['s16buffersize_1470',['s16BufferSize',['../structtstr_socket_recv_msg.html#ab168d796b75da8f433e24959e8ac3470',1,'tstrSocketRecvMsg']]],
+  ['s8error_1471',['s8Error',['../structtstr_socket_connect_msg.html#a5a2aca54bb8115e0c044090e60d188c2',1,'tstrSocketConnectMsg']]],
+  ['s8errorcode_1472',['s8ErrorCode',['../structtstr_m2_m_generic_resp.html#acef95069793dcb79655698c11e4b2663',1,'tstrM2MGenericResp::s8ErrorCode()'],['../structtstr_m2_m_default_conn_resp.html#acef95069793dcb79655698c11e4b2663',1,'tstrM2MDefaultConnResp::s8ErrorCode()']]],
+  ['s8rssi_1473',['s8RSSI',['../structtstr_m2_m_wifi_rx_packet_info.html#a520173fef1ecdf12f9bdffc01354df15',1,'tstrM2MWifiRxPacketInfo::s8RSSI()'],['../structtstr_m2_m_conn_info.html#a520173fef1ecdf12f9bdffc01354df15',1,'tstrM2MConnInfo::s8RSSI()'],['../structtstr_m2m_wifiscan_result.html#a5c8c9f35155f2acb621ea3f3ee5e0bce',1,'tstrM2mWifiscanResult::s8rssi()']]],
+  ['s8rssithresh_1474',['s8RssiThresh',['../structtstr_m2_m_scan_option.html#a298528207bbe63cb9e1aa914a28f35e3',1,'tstrM2MScanOption']]],
+  ['s8scanstate_1475',['s8ScanState',['../structtstr_m2m_scan_done.html#a52d8883d6293dd16a595855c865cbe6f',1,'tstrM2mScanDone']]],
+  ['s_5faddr_1476',['s_addr',['../structin__addr.html#a883f3999d3829e36e1886572a28a787d',1,'in_addr']]],
+  ['sa_5fdata_1477',['sa_data',['../structsockaddr.html#ad6a553cfefd4b3cd38d85a489c3e9314',1,'sockaddr']]],
+  ['sa_5ffamily_1478',['sa_family',['../structsockaddr.html#a4df9597bca2a0bd5d0f51e93f3b762e7',1,'sockaddr']]],
+  ['sin_5faddr_1479',['sin_addr',['../structsockaddr__in.html#a1c7bfbfe59dbefd9344f98157b26ccdc',1,'sockaddr_in']]],
+  ['sin_5ffamily_1480',['sin_family',['../structsockaddr__in.html#a6f6fa523877553c72d27dfe4678c8774',1,'sockaddr_in']]],
+  ['sin_5fport_1481',['sin_port',['../structsockaddr__in.html#a17c017619a9612c083063a3438ac4b5e',1,'sockaddr_in']]],
+  ['sin_5fzero_1482',['sin_zero',['../structsockaddr__in.html#a8af0ddfcd8e41f2c9f81b066217c0b58',1,'sockaddr_in']]],
+  ['sock_1483',['sock',['../structtstr_socket_accept_msg.html#a6e91849780a994f2adde299b33642829',1,'tstrSocketAcceptMsg::sock()'],['../structtstr_socket_connect_msg.html#a6e91849780a994f2adde299b33642829',1,'tstrSocketConnectMsg::sock()']]],
+  ['status_1484',['status',['../structtstr_socket_bind_msg.html#a555c2084e8436de01dc76a23590e8824',1,'tstrSocketBindMsg::status()'],['../structtstr_socket_listen_msg.html#a555c2084e8436de01dc76a23590e8824',1,'tstrSocketListenMsg::status()']]],
+  ['straddr_1485',['strAddr',['../structtstr_socket_accept_msg.html#aba9efd999839aeefa7e4dfde440ceae4',1,'tstrSocketAcceptMsg']]],
+  ['strapconfig_1486',['strApConfig',['../structtstr_m2_m_a_p_mode_config.html#ae90e947cf5a48bacaee0b03278922116',1,'tstrM2MAPModeConfig::strApConfig()'],['../structtstr_m2_m_provision_mode_config.html#ae90e947cf5a48bacaee0b03278922116',1,'tstrM2MProvisionModeConfig::strApConfig()']]],
+  ['strapconfigext_1487',['strApConfigExt',['../structtstr_m2_m_a_p_mode_config.html#a5e0864902fbe488dd3088d3dda541056',1,'tstrM2MAPModeConfig::strApConfigExt()'],['../structtstr_m2_m_provision_mode_config.html#a5e0864902fbe488dd3088d3dda541056',1,'tstrM2MProvisionModeConfig::strApConfigExt()']]],
+  ['strconncredcmn_1488',['strConnCredCmn',['../structtstr_m2m_wifi_conn_hdr.html#aa373c86da00cf80c99b391e48c485732',1,'tstrM2mWifiConnHdr']]],
+  ['strconncredhdr_1489',['strConnCredHdr',['../structtstr_m2m_wifi_conn_hdr.html#a8778781db84b94d740a994d7df6d9da0',1,'tstrM2mWifiConnHdr']]],
+  ['strethinitparam_1490',['strEthInitParam',['../group__m2m__wifi.html#ga59cd226561744cd8589eb7d3b91f2bb9',1,'tstrWifiInitParam']]],
+  ['strremoteaddr_1491',['strRemoteAddr',['../structtstr_socket_recv_msg.html#aa2f149977146f3d7f8859c8914e771f4',1,'tstrSocketRecvMsg']]]
+];

@@ -8,6 +8,8 @@
 #ifndef DEBUG_H
 #define	DEBUG_H
 
+#include  <stdio.h>
+
 #define DEBUG_LEVEL 2
 
 #if !defined DEBUG_LEVEL

@@ -21,7 +21,7 @@
 * Includes
 *******************************************************************************/
 #include "atmega4808_rtc.h"
-#include "mcc_generated_files/utils/utils_assert.h"
+#include "../mcc_generated_files/utils/utils_assert.h"
 
 /******************************************************************************
 * Module Typedefs

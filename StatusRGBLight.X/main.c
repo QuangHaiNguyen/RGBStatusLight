@@ -6,10 +6,15 @@
 #include "debug.h"
 #include "led.h"
 
-#define CLI_EN          0
-#define WIFI_EN         0
-#define TEST_WS2812     0
-#define TEST_RTC        1
+#define CLI_EN              0
+#define WIFI_EN             0
+#define TEST_WS2812         0
+#define TEST_RTC            0
+#define TEST_SCHEDULER      1
+
+#if TEST_SCHEDULER
+#include "scheduler/scheduler.h"
+#endif
 
 #if TEST_RTC
 #include "atmega4808_rtc.h"
@@ -90,6 +95,10 @@ int main(void)
     PORTF_SW1_SetInterruptHandler(SW1_InterruptHandler);
     PORTF_SW0_SetInterruptHandler(SW0_InterruptHandler);
     
+#if TEST_SCHEDULER
+    Scheduler_Init();
+#endif
+    
 #if TEST_WS2812
     Test_WS2812();
 #endif
@@ -124,6 +133,9 @@ int main(void)
     /* Replace with your application code */
     
     while (1){
+#if TEST_SCHEDULER
+        Scheduler_Run();
+#endif
 #if WIFI_EN
         m2m_wifi_handle_events(NULL);
 #endif

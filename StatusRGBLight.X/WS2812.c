@@ -21,7 +21,6 @@
 * Includes
 *******************************************************************************/
 #include "WS2812.h"
-#include "include/winc_legacy.h"
 #include <string.h>
 #include <stdio.h>
 

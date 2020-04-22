@@ -8,9 +8,12 @@
 
 #define CLI_EN          0
 #define WIFI_EN         0
-#define TEST_WS2812     1
+#define TEST_WS2812     0
+#define TEST_RTC        1
 
-
+#if TEST_RTC
+#include "atmega4808_rtc.h"
+#endif
 
 #if WIFI_EN
 #include "mcc_generated_files/winc/m2m/m2m_wifi.h"
@@ -39,15 +42,16 @@ void Test_WS2812(void);
 
 #if CLI_EN
 static char ch;
+void Test1(void);
+void Test2(void);
+void Test3(void);
 CLI_Status cli_stt;
 command_t cmd_table[3] = {
         {"test_1", Test1},
 		{"test_2", Test2},
         {"test_3", Test3},
 };
-void Test1(void);
-void Test2(void);
-void Test3(void);
+
 #endif
 
 
@@ -67,7 +71,7 @@ int main(void)
 {
     /* Initializes MCU, drivers and middleware */
     SYSTEM_Initialize();
-    
+    sei();
     PRINT_INFO("%s", "********************************************\n");
     PRINT_INFO("%s", "System initialized\n");
     USART2_SetISRCb(UART2_RXCallback, USART2_RX_CB);
@@ -90,6 +94,11 @@ int main(void)
     Test_WS2812();
 #endif
 
+#if TEST_RTC
+    ATMEGA4808_RTC_Init();
+    ATMEGA4808_RTC_Start();
+#endif
+    
 #if WIFI_EN
     tstrWifiInitParam wifi_param;
     winc_adapter_init();
@@ -115,8 +124,6 @@ int main(void)
     /* Replace with your application code */
     
     while (1){
-        //TCA0.SINGLE.CTRLA |= (1 << TCA_SINGLE_ENABLE_bp);
-        //DELAY_milliseconds(1);
 #if WIFI_EN
         m2m_wifi_handle_events(NULL);
 #endif
@@ -185,7 +192,7 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
 #if CLI_EN
 void Test1(void)
 {
-    printf("This is test 1\n");
+    PRINT_DEBUG("tick;%d\n", ATMEGA4808_RTC_GetTicks());
 }
 void Test2(void)
 {

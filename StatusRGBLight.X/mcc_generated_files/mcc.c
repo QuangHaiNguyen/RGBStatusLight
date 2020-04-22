@@ -46,6 +46,7 @@ void SYSTEM_Initialize(void)
     SPI0_Initialize();
     TCA0_Initialize();
     USART2_Initialize();
+    RTC_Initialize();
     CPUINT_Initialize();
 }
 

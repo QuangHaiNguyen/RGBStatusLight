@@ -1,14 +1,6 @@
 var searchData=
 [
-  ['ws2812_2ec_13',['WS2812.c',['../_w_s2812_8c.html',1,'']]],
-  ['ws2812_2eh_14',['WS2812.h',['../_w_s2812_8h.html',1,'']]],
-  ['ws2812_5fconf_2eh_15',['WS2812_conf.h',['../_w_s2812__conf_8h.html',1,'']]],
-  ['ws2812_5fdeinit_16',['WS2812_DeInit',['../_w_s2812_8c.html#a0e851b8993b7f8688827bb84531c46ac',1,'WS2812_DeInit(void):&#160;WS2812.c'],['../_w_s2812_8h.html#a0e851b8993b7f8688827bb84531c46ac',1,'WS2812_DeInit(void):&#160;WS2812.c']]],
-  ['ws2812_5fgetpointertorgbdata_17',['WS2812_GetPointerToRGBData',['../_w_s2812_8c.html#af709ba82c9a1449861efcce3b20c470f',1,'WS2812_GetPointerToRGBData(uint16_t **ptr):&#160;WS2812.c'],['../_w_s2812_8h.html#af709ba82c9a1449861efcce3b20c470f',1,'WS2812_GetPointerToRGBData(uint16_t **ptr):&#160;WS2812.c']]],
-  ['ws2812_5finit_18',['WS2812_Init',['../_w_s2812_8c.html#a6739f8b5394acedd5d922456c01c3108',1,'WS2812_Init(uint16_t num_of_led):&#160;WS2812.c'],['../_w_s2812_8h.html#a6739f8b5394acedd5d922456c01c3108',1,'WS2812_Init(uint16_t num_of_led):&#160;WS2812.c']]],
-  ['ws2812_5fledoff_19',['WS2812_LedOff',['../_w_s2812_8c.html#a3856e801f881abab45fb5361cb4a0407',1,'WS2812_LedOff(void):&#160;WS2812.c'],['../_w_s2812_8h.html#a3856e801f881abab45fb5361cb4a0407',1,'WS2812_LedOff(void):&#160;WS2812.c']]],
-  ['ws2812_5fsetcolor_20',['WS2812_SetColor',['../_w_s2812_8c.html#a0dbf81b6f6c7027136cc8c93b2065948',1,'WS2812_SetColor(uint16_t position, uint8_t r, uint8_t g, uint8_t b):&#160;WS2812.c'],['../_w_s2812_8h.html#a0dbf81b6f6c7027136cc8c93b2065948',1,'WS2812_SetColor(uint16_t position, uint8_t r, uint8_t g, uint8_t b):&#160;WS2812.c']]],
-  ['ws2812_5fsetcolorall_21',['WS2812_SetColorAll',['../_w_s2812_8c.html#a425bd2913bb27a55dd18356a1e296346',1,'WS2812_SetColorAll(uint8_t r, uint8_t g, uint8_t b):&#160;WS2812.c'],['../_w_s2812_8h.html#a425bd2913bb27a55dd18356a1e296346',1,'WS2812_SetColorAll(uint8_t r, uint8_t g, uint8_t b):&#160;WS2812.c']]],
-  ['ws2812_5fstatus_22',['WS2812_Status',['../_w_s2812_8h.html#af7ac62ad5c8b1d1369e3f150ad4cf047',1,'WS2812_Status():&#160;WS2812.h'],['../_w_s2812_8h.html#a8a345e53661a9cafe71d5ced09adca3b',1,'WS2812_STATUS():&#160;WS2812.h']]],
-  ['ws2812_5fupdate_23',['WS2812_Update',['../_w_s2812_8c.html#a0743543f83408041d77b29f18ff61f21',1,'WS2812_Update(void):&#160;WS2812.c'],['../_w_s2812_8h.html#a0743543f83408041d77b29f18ff61f21',1,'WS2812_Update(void):&#160;WS2812.c']]]
+  ['rgbstatuslight_21',['RGBStatusLight',['../md__c_1__users_haing__nextcloud__my__work__project_workspace__status_r_g_b_light__r_e_a_d_m_e.html',1,'']]],
+  ['rgb_5fbuff_5findex_22',['RGB_buff_index',['../atmega4808__pwm_8c.html#a253e6ccb51cce502a2c56940bda6730a',1,'atmega4808_pwm.c']]],
+  ['rgb_5fbuff_5fsize_23',['RGB_buff_size',['../atmega4808__pwm_8c.html#a24fbbb0e1476450558e408c00300d95e',1,'atmega4808_pwm.c']]]
 ];

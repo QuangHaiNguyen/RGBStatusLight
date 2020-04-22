@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.18"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>RGBStatusLight: C:/Users/haing/Nextcloud/My Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/atmega4808_pwm.h Source File</title>
+<title>RGBStatusLight: C:/Users/haing/Nextcloud/My Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/ws2812/atmega4808_pwm.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -106,51 +106,49 @@ $(document).ready(function(){initNavTree('atmega4808__pwm_8h_source.html',''); i
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">/*******************************************************************************</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">* Includes</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">*******************************************************************************/</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &quot;mcc_generated_files/mcc.h&quot;</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_w_s2812_8h.html">WS2812.h</a>&quot;</span>    </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">/******************************************************************************</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">* Module Preprocessor Macros</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">*******************************************************************************/</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">//Define length for the PWM duty cycle and period</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#define BIT_1           6   //6 timer ticks x 100ns = 600ns</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#define BIT_0           3   //3 timer ticks x 100ns = 300ns</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define PERIOD          60  //60 timer ticks x 100ns = 6000ns</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#define RESET_TIME      3   //3 pulses x 60 timer ticks x 100ns = 18000ns</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">/******************************************************************************</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">* Module Typedefs</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">*******************************************************************************/</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">//None</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">/******************************************************************************</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">* Module Variable Definitions</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">*******************************************************************************/</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">/******************************************************************************</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">* Function Prototypes</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">*******************************************************************************/</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#a36dcfbb62fe47022cb1d7ea0b47e8370">ATMEGA4808_PWM_Init</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#a1d8a8689b4d825fb4c03cfe9fd92728e">ATMEGA4808_PWM_Start</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#ad4b8fa72d2eff83523edd57c7802f3a9">ATMEGA4808_PWM_Stop</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#af0ebadd37fcf01735a44c4dd552ad332">ATMEGA4808_PWM_DeInit</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#ae1e0a8dbbcc20ebb178fe1c88986fa18">ATMEGA4808_PWM_GetRGBDataInfo</a>(uint16_t **ptr_to_buff, uint16_t buff_size);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">/* ATMEGA4808_PWM_H */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">/*** End of File **************************************************************/</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &quot;../common.h&quot;</span>   </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">* Module Preprocessor Macros</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">*******************************************************************************/</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">//Define length for the PWM duty cycle and period</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#define BIT_1           6   //6 timer ticks x 100ns = 600ns</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#define BIT_0           3   //3 timer ticks x 100ns = 300ns</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#define PERIOD          60  //60 timer ticks x 100ns = 6000ns</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define RESET_TIME      3   //3 pulses x 60 timer ticks x 100ns = 18000ns</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">* Module Typedefs</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">*******************************************************************************/</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">//None</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">* Module Variable Definitions</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">*******************************************************************************/</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">* Function Prototypes</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">*******************************************************************************/</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#a36dcfbb62fe47022cb1d7ea0b47e8370">ATMEGA4808_PWM_Init</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#a1d8a8689b4d825fb4c03cfe9fd92728e">ATMEGA4808_PWM_Start</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#ad4b8fa72d2eff83523edd57c7802f3a9">ATMEGA4808_PWM_Stop</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#af0ebadd37fcf01735a44c4dd552ad332">ATMEGA4808_PWM_DeInit</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordtype">void</span> <a class="code" href="atmega4808__pwm_8h.html#ae1e0a8dbbcc20ebb178fe1c88986fa18">ATMEGA4808_PWM_GetRGBDataInfo</a>(uint16_t **ptr_to_buff, uint16_t buff_size);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">/* ATMEGA4808_PWM_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">/*** End of File **************************************************************/</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="aatmega4808__pwm_8h_html_ae1e0a8dbbcc20ebb178fe1c88986fa18"><div class="ttname"><a href="atmega4808__pwm_8h.html#ae1e0a8dbbcc20ebb178fe1c88986fa18">ATMEGA4808_PWM_GetRGBDataInfo</a></div><div class="ttdeci">void ATMEGA4808_PWM_GetRGBDataInfo(uint16_t **ptr_to_buff, uint16_t buff_size)</div><div class="ttdef"><b>Definition:</b> atmega4808_pwm.c:125</div></div>
 <div class="ttc" id="aatmega4808__pwm_8h_html_a1d8a8689b4d825fb4c03cfe9fd92728e"><div class="ttname"><a href="atmega4808__pwm_8h.html#a1d8a8689b4d825fb4c03cfe9fd92728e">ATMEGA4808_PWM_Start</a></div><div class="ttdeci">void ATMEGA4808_PWM_Start(void)</div><div class="ttdef"><b>Definition:</b> atmega4808_pwm.c:166</div></div>
-<div class="ttc" id="a_w_s2812_8h_html"><div class="ttname"><a href="_w_s2812_8h.html">WS2812.h</a></div><div class="ttdoc">This file provides the APIs to interface with WS2812 LED Strip.</div></div>
 <div class="ttc" id="aatmega4808__pwm_8h_html_a36dcfbb62fe47022cb1d7ea0b47e8370"><div class="ttname"><a href="atmega4808__pwm_8h.html#a36dcfbb62fe47022cb1d7ea0b47e8370">ATMEGA4808_PWM_Init</a></div><div class="ttdeci">void ATMEGA4808_PWM_Init(void)</div><div class="ttdef"><b>Definition:</b> atmega4808_pwm.c:78</div></div>
 <div class="ttc" id="aatmega4808__pwm_8h_html_ad4b8fa72d2eff83523edd57c7802f3a9"><div class="ttname"><a href="atmega4808__pwm_8h.html#ad4b8fa72d2eff83523edd57c7802f3a9">ATMEGA4808_PWM_Stop</a></div><div class="ttdeci">void ATMEGA4808_PWM_Stop(void)</div><div class="ttdef"><b>Definition:</b> atmega4808_pwm.c:211</div></div>
 <div class="ttc" id="aatmega4808__pwm_8h_html_af0ebadd37fcf01735a44c4dd552ad332"><div class="ttname"><a href="atmega4808__pwm_8h.html#af0ebadd37fcf01735a44c4dd552ad332">ATMEGA4808_PWM_DeInit</a></div><div class="ttdeci">void ATMEGA4808_PWM_DeInit(void)</div><div class="ttdef"><b>Definition:</b> atmega4808_pwm.c:247</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_1c1e87d6b280f45031274aa78b88fc7c.html">StatusRGBLight.X</a></li><li class="navelem"><a class="el" href="atmega4808__pwm_8h.html">atmega4808_pwm.h</a></li>
+    <li class="navelem"><a class="el" href="dir_1c1e87d6b280f45031274aa78b88fc7c.html">StatusRGBLight.X</a></li><li class="navelem"><a class="el" href="dir_f4793759dbb2533da337b25b16c5b31f.html">ws2812</a></li><li class="navelem"><a class="el" href="atmega4808__pwm_8h.html">atmega4808_pwm.h</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.18 </li>

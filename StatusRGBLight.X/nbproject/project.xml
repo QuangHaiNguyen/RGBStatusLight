@@ -14,6 +14,7 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>scheduler</sourceRootElem>
+                <sourceRootElem>ws2812</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

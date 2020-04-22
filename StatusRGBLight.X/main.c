@@ -1,9 +1,8 @@
 
-#include "mcc_generated_files/mcc.h"
+#include "common.h"
 #include <stdio.h>
 #include <string.h>
 #include <util/delay.h>
-#include "debug.h"
 #include "led.h"
 
 #define CLI_EN              0

@@ -25,9 +25,14 @@
 var NAVTREE =
 [
   [ "RGBStatusLight", "index.html", [
+    [ "RGBStatusLight", "md__c_1__users_haing__nextcloud__my__work__project_workspace__status_r_g_b_light__r_e_a_d_m_e.html", null ],
     [ "Data Structures", "annotated.html", [
       [ "Data Structures", "annotated.html", "annotated_dup" ],
-      [ "Data Structure Index", "classes.html", null ]
+      [ "Data Structure Index", "classes.html", null ],
+      [ "Data Fields", "functions.html", [
+        [ "All", "functions.html", null ],
+        [ "Variables", "functions_vars.html", null ]
+      ] ]
     ] ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ],
@@ -44,7 +49,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_w_s2812_8c.html"
+"_test___task__1s_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

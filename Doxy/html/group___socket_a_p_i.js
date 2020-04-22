@@ -1,0 +1,26 @@
+var group___socket_a_p_i =
+[
+    [ "accept", "group___socket_a_p_i.html#ga5063a4373c8a711b966ad0f4e6caca87", null ],
+    [ "bind", "group___socket_a_p_i.html#gaad1c6d98b22166914c734145e37e1b72", null ],
+    [ "close", "group___socket_a_p_i.html#ga9aa602e3c2323ac4b6f9293042b8c8c6", null ],
+    [ "connect", "group___socket_a_p_i.html#ga459851d89ff927827263db7a6e7a05b8", null ],
+    [ "gethostbyname", "group___socket_a_p_i.html#gaf7fc869b27dd3017bfe0d40c5c247f8a", null ],
+    [ "getsockopt", "group___socket_a_p_i.html#ga1f56e204df82390b9cdbb7ca8dc2e0d1", null ],
+    [ "inet_addr", "group___socket_a_p_i.html#ga3e3b8f43e05dc3b87977b6a7a2ed09ca", null ],
+    [ "inet_ntop", "group___socket_a_p_i.html#ga2a4b830a00870799ee852d4c6a72a1eb", null ],
+    [ "IsSocketReady", "group___socket_a_p_i.html#ga4c1e3cd42becd18ae4d8d2c504ca72e5", null ],
+    [ "listen", "group___socket_a_p_i.html#gadd2cb165050da640d8bef959dc461cba", null ],
+    [ "m2m_ping_req", "group___socket_a_p_i.html#gadf34338379680287b7f8085e8ff98694", null ],
+    [ "recv", "group___socket_a_p_i.html#gaf608b1b7ea57f750bf4dfa623ddbe12c", null ],
+    [ "recvfrom", "group___socket_a_p_i.html#ga16804704d87511f43b63c8df9cb5c3b3", null ],
+    [ "registerSocketCallback", "group___socket_a_p_i.html#ga77a4e7fb049cc8c22d95404a23d8096e", null ],
+    [ "registerSocketEventCallback", "group___socket_a_p_i.html#gacbbf739c525c111e416f34ad5a4166da", null ],
+    [ "registerSocketResolveCallback", "group___socket_a_p_i.html#ga91bf81048bac815eaaf9b8d196b33c7b", null ],
+    [ "send", "group___socket_a_p_i.html#ga14d74baf72dade3e821b6cbff04c17c2", null ],
+    [ "sendto", "group___socket_a_p_i.html#gaa0a86c7199e242c0ee7c99b0d29473eb", null ],
+    [ "setsockopt", "group___socket_a_p_i.html#ga8cba985747bde7a8236c1620c3f74f1b", null ],
+    [ "socket", "group___socket_a_p_i.html#ga3af525e03c1d87e1c38bc80707cc96b9", null ],
+    [ "socketDeinit", "group___socket_a_p_i.html#gaae86b3f9d161e298e7ed3c5707bd9ed1", null ],
+    [ "socketInit", "group___socket_a_p_i.html#gadc1a241370d03a56c23bfb9ad8407ca2", null ],
+    [ "sslEnableCertExpirationCheck", "group___socket_a_p_i.html#ga3ec5981467a0cc4d8b5159f1680ff5fd", null ]
+];

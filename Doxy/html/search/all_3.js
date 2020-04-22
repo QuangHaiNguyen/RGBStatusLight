@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lec_5fcomp_9',['LEC_COMP',['../struct_l_e_c___c_o_m_p.html',1,'']]]
+  ['lasttick_18',['LastTick',['../struct_task__t.html#ad0f25a2cd071bd41eed108947b576ba0',1,'Task_t']]]
 ];

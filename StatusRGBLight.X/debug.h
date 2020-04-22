@@ -23,13 +23,13 @@
 #if DEBUG_LEVEL >= 1
     #define PRINT_INFO( format, ... )   printf( "[INFO]:" format, __VA_ARGS__ )
 #else
-    #define PRINT_DEBUG(...)
+    #define PRINT_INFO(...)
 #endif
 
 #if DEBUG_LEVEL >= 0
     #define PRINT_ERROR( format, ... )   printf( "[ERROR]:%s::%s(%d) " format, __FILE__, __FUNCTION__,  __LINE__, __VA_ARGS__ )
 #else
-    #define PRINT_INFO(...)
+    #define PRINT_ERROR(...)
 #endif
 
 #endif	/* DEBUG_H */

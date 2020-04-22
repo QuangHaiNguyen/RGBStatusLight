@@ -3,39 +3,67 @@
 #include <stdio.h>
 #include <string.h>
 #include <util/delay.h>
-#include "cli.h"
-#include "led.h"
 #include "debug.h"
+#include "led.h"
 
+#define CLI_EN          0
+#define WIFI_EN         0
+#define TEST_WS2812     0
+#define TEST_RTC        1
+
+#if TEST_RTC
+#include "atmega4808_rtc.h"
+#endif
+
+#if WIFI_EN
 #include "mcc_generated_files/winc/m2m/m2m_wifi.h"
 #include "mcc_generated_files/winc/m2m/m2m_types.h"
 #include "common/winc_defines.h"
 #include "driver/winc_adapter.h"
+#endif
 
-#define CLI_EN      0
+#if CLI_EN
+#include "cli.h"
+#endif 
 
+#if TEST_WS2812
+#include "WS2812.h"
+#include "include/winc_legacy.h"
+#endif
+
+
+#if WIFI_EN
+void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
+#endif
+
+#if TEST_WS2812
+void Test_WS2812(void);
+#endif
+
+#if CLI_EN
+static char ch;
 void Test1(void);
 void Test2(void);
 void Test3(void);
-void UART2_RXCallback(void);
-void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
-
-static char ch;
 CLI_Status cli_stt;
-
-
 command_t cmd_table[3] = {
         {"test_1", Test1},
 		{"test_2", Test2},
         {"test_3", Test3},
 };
+
+#endif
+
+
+void UART2_RXCallback(void);
+void SW1_InterruptHandler(void);
+void SW0_InterruptHandler(void);
+
 uint8_t version;
 uint8_t sub_version;
 uint8_t ssub_version;
 Led_Comp led; 
-tstrWifiInitParam wifi_param;
-    
-
+bool flag = false;
 /*
     Main application
 */
@@ -43,12 +71,10 @@ int main(void)
 {
     /* Initializes MCU, drivers and middleware */
     SYSTEM_Initialize();
-    winc_adapter_init();
+    sei();
+    PRINT_INFO("%s", "********************************************\n");
     PRINT_INFO("%s", "System initialized\n");
     USART2_SetISRCb(UART2_RXCallback, USART2_RX_CB);
-    
-    
-    
     
 #if CLI_EN
     CLI_Init(cmd_table, 3);
@@ -61,7 +87,23 @@ int main(void)
     PRINT_INFO("LED version %02d.%02d.%02d\n", version, sub_version,ssub_version);
     PRINT_INFO("number of available Led: %d\n", led.NumOfLed());
     
+    PORTF_SW1_SetInterruptHandler(SW1_InterruptHandler);
+    PORTF_SW0_SetInterruptHandler(SW0_InterruptHandler);
+    
+#if TEST_WS2812
+    Test_WS2812();
+#endif
+
+#if TEST_RTC
+    ATMEGA4808_RTC_Init();
+    ATMEGA4808_RTC_Start();
+#endif
+    
+#if WIFI_EN
+    tstrWifiInitParam wifi_param;
+    winc_adapter_init();
     wifi_param.pfAppWifiCb = Wifi_EventCallback;
+
     if(!m2m_wifi_init(&wifi_param)){
         
         tstrM2MAPConfig apConfig = {
@@ -78,9 +120,14 @@ int main(void)
         m2m_wifi_start_provision_mode(&apConfig, "atmelwincconfig.com", 1);
     }
     PRINT_DEBUG("%s", "AP Started\n");
+#endif
     /* Replace with your application code */
+    
     while (1){
+#if WIFI_EN
         m2m_wifi_handle_events(NULL);
+#endif
+        
 #if CLI_EN
         cli_stt = CLI_ProccessCommand();
         if(CLI_CMD_NOTFOUND == cli_stt){
@@ -90,6 +137,7 @@ int main(void)
     }
 }
 
+#if WIFI_EN
 void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
 {
     tstrM2MProvisionInfo *pstrProvInfo;
@@ -118,7 +166,6 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
             {
                 tstrM2MConnInfo *pstrInfo = (tstrM2MConnInfo*)pvMsg;
                 PRINT_DEBUG("Connected to: %s\n", pstrInfo->acSSID);
-                PRINT_DEBUG("IP; %d:%d:%d:%d\n", pstrInfo->au8IPAddr[0], pstrInfo->au8IPAddr[1], pstrInfo->au8IPAddr[2], pstrInfo->au8IPAddr[3]);
             }
             break;
         case M2M_WIFI_RESP_PROVISION_INFO:           
@@ -136,14 +183,16 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
             break;
         
         default:
-            PRINT_ERROR("%s", "Unknown/unhandled wifi event\n");
+            PRINT_DEBUG("%s", "Unknown/unhandled wifi event\n");
             break;
     }
 }
+#endif
 
+#if CLI_EN
 void Test1(void)
 {
-    printf("This is test 1\n");
+    PRINT_DEBUG("tick;%d\n", ATMEGA4808_RTC_GetTicks());
 }
 void Test2(void)
 {
@@ -153,13 +202,53 @@ void Test3(void)
 {
     printf("This is test 3\n");
 }
+#endif
+
+#if TEST_WS2812
+void Test_WS2812(void)
+{
+    if(WS2812_OK != WS2812_Init(20)){
+        PRINT_ERROR("%s", "Cannot initialize LED component");
+        return;
+    }
+    WS2812_LedOff();
+    WS2812_Update();
+    while(1)
+    {
+        WS2812_SetColorAll(255,0,0);
+        WS2812_Update();
+        DELAY_milliseconds(500);
+        WS2812_SetColorAll(0,255,0);
+        WS2812_Update();
+        DELAY_milliseconds(500);
+        WS2812_SetColorAll(0,0,255);
+        WS2812_Update();
+        DELAY_milliseconds(500);
+    }
+}
+#endif
+
 
 void UART2_RXCallback(void)
 {
+#if CLI_EN
     ch = USART2.RXDATAL;
     USART2.TXDATAL = ch;
     CLI_GetChar(ch);
+#endif
 }
+
+
+void SW1_InterruptHandler(void)
+{
+    //led.LED_SetHigh(BLUE_LED);
+}
+void SW0_InterruptHandler(void)
+{
+    //led.LED_SetLow(BLUE_LED);
+}
+
+
 /**
     End of File
 */

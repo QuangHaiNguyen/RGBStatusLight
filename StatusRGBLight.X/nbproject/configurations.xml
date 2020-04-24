@@ -143,6 +143,15 @@
         <itemPath>mcc_generated_files/mcc.c</itemPath>
         <itemPath>mcc_generated_files/delay.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="Network" projectFiles="true">
+        <itemPath>network/network.c</itemPath>
+        <itemPath>network/network.h</itemPath>
+        <itemPath>network/network_conf.h</itemPath>
+        <itemPath>network/network_winc1500.c</itemPath>
+        <itemPath>network/network_winc1500.h</itemPath>
+        <itemPath>network/winc1500_tcp_server.h</itemPath>
+        <itemPath>network/winc1500_tcp_server.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="Scheduler" projectFiles="true">
         <itemPath>scheduler/Test_Task_1s.c</itemPath>
         <itemPath>scheduler/Test_Task_1s.h</itemPath>
@@ -154,6 +163,10 @@
         <itemPath>scheduler/scheduler.h</itemPath>
         <itemPath>scheduler/scheduler_conf.c</itemPath>
         <itemPath>scheduler/scheduler_conf.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f4" displayName="utility" projectFiles="true">
+        <itemPath>utility/ring_buffer.c</itemPath>
+        <itemPath>utility/ring_buffer.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="WS2812" projectFiles="true">
         <itemPath>ws2812/WS2812.c</itemPath>
@@ -180,6 +193,8 @@
   <sourceRootList>
     <Elem>scheduler</Elem>
     <Elem>ws2812</Elem>
+    <Elem>network</Elem>
+    <Elem>utility</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

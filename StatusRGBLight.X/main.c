@@ -6,10 +6,21 @@
 #include "led.h"
 
 #define CLI_EN              0
-#define WIFI_EN             1
+#define WIFI_EN             0
 #define TEST_WS2812         0
 #define TEST_RTC            0
 #define TEST_SCHEDULER      0
+#define TEST_NETWORK        0
+#define TEST_RING_BUFF      0
+
+#if TEST_RING_BUFF
+#include "utility/ring_buffer.h"
+#endif
+
+#if TEST_NETWORK
+#include "network/network.h"
+static Network *TaskPointer = NULL;
+#endif
 
 #if TEST_SCHEDULER
 #include "scheduler/scheduler.h"
@@ -52,7 +63,8 @@ static t_msg_wifi_product msg_wifi_product = {
     .name = MAIN_WIFI_M2M_PRODUCT_NAME,
 };
 
-
+tstrWifiInitParam wifi_param;
+    
 static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg);
 void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
 #endif
@@ -136,14 +148,14 @@ int main(void)
     
 #if WIFI_EN
     struct sockaddr_in addr;
-    tstrWifiInitParam wifi_param;
+    
     winc_adapter_init();
     
     /* Initialize socket address structure. */
 	addr.sin_family      = AF_INET;
 	addr.sin_port        = _htons(MAIN_WIFI_M2M_SERVER_PORT);
 	addr.sin_addr.s_addr = 0;
-
+    
     wifi_param.pfAppWifiCb = Wifi_EventCallback;
     
     /* Initialize socket module */
@@ -172,6 +184,7 @@ int main(void)
     PRINT_DEBUG("%s", "AP Started\n");
 #endif
     /* Connect to router. */
+ 
 	m2m_wifi_connect((char *)MAIN_WLAN_SSID, 
             sizeof(MAIN_WLAN_SSID), 
             MAIN_WLAN_AUTH, 
@@ -180,8 +193,53 @@ int main(void)
     
 #endif
     /* Replace with your application code */
+#if TEST_NETWORK
+    NetworkInit();
+    TaskPointer = GetNetworkIFList();
+    PRINT_DEBUG("Using: %s\n", TaskPointer[0].name);
+    TaskPointer[0].interface->Network_Init();
+    TaskPointer[0].interface->Network_ClientMode();
+#endif
+#if TEST_RING_BUFF
+    uint8_t test_read_buff[20] = {0};
+    uint8_t avail_mem;
+    RingBuffer buff;
+    if(BUFF_OK != RingBuffer_Init(&buff, 20))
+    {
+        while(1);
+    }
+    if(BUFF_OK != RingBuffer_Push(&buff, "hello\n", 6))
+    {
+        PRINT_ERROR("%s","buff memory error\n");
+        while(1);
+    }
     
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+    RingBuffer_Push(&buff, "world\n", 6);
+    
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+    RingBuffer_Pop(&buff, test_read_buff, 6);
+    PRINT_DEBUG("in buffer: %s\n", test_read_buff);
+    
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+    RingBuffer_Pop(&buff, test_read_buff, 6);
+    PRINT_DEBUG("in buffer: %s\n", test_read_buff);
+    
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+#endif
     while (1){
+#if TEST_NETWORK
+        TaskPointer[0].interface->Network_EventHandle();
+#endif
+        
 #if TEST_SCHEDULER
         Scheduler_Run();
 #endif
@@ -239,6 +297,7 @@ void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
             {
                 tstrM2MConnInfo *pstrInfo = (tstrM2MConnInfo*)pvMsg;
                 PRINT_DEBUG("Connected to: %s\n", pstrInfo->acSSID);
+                
             }
             break;
         case M2M_WIFI_RESP_PROVISION_INFO:           

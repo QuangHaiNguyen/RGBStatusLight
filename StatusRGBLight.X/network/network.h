@@ -8,9 +8,8 @@
 #ifndef NETWOR_H
 #define	NETWOR_H
 
-
-
 #include "network_conf.h"
+
 
 typedef struct{
     uint8_t (*Network_Init)(void);
@@ -22,27 +21,22 @@ typedef struct{
 
 
 typedef struct{
-    uint8_t (*TCPServer_Init)(void);
-    uint8_t (*TCPServer_DeInit)(void);
-    uint8_t (*TCPServer_Bind)(void);
+    uint8_t (*TCPServer_Open)( uint16_t port,
+                                uint8_t **socket_read_data,
+                                uint8_t **socket_write_data,
+                                uint16_t socket_data_size,
+                                uint32_t *ip);
     uint8_t (*TCPServer_Close)(void);
-    uint8_t (*TCPServer_Send)(void);
-    uint8_t (*TCPServer_Recieve)(void);
-    uint8_t (*TCPServer_GetIP)(uint32_t * ip);
-}TCPServer;
-
-typedef struct{
-    char const *name;
-    bool isActive;
-    NetworkIF_t *interface;
-}Network;
+    uint8_t (*TCPServer_Read)(uint16_t num_of_byte);
+    uint8_t (*TCPServer_Write)(uint16_t num_of_byte);
+    uint8_t (*TCPServer_SetCallback)(TCPServer_cb_t  cb);
+}Network_TCPServer;
 
 
-uint8_t GetNumberOfNetwork(void);
-Network * const GetNetworkIFList(void);
-
-void NetworkInit(void);
-void NetworkDeInit(void);
+void NetworkIF_Init(NetworkIF_t *interface);
+void NetworkIF_DeInit(NetworkIF_t *interface);
+void Network_TCPServerInit(Network_TCPServer * server);
+void Network_TCPServerDeInit(Network_TCPServer * server);
 
 #endif	/* NETWOR_H */
 

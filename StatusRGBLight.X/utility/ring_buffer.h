@@ -23,7 +23,7 @@
 /* Global function prototype section ---------------------------------*/
 typedef struct
 {
-    uint8_t * buff;
+    uint8_t *buff;
     uint8_t capacity;
     uint8_t head;
     uint8_t tail;

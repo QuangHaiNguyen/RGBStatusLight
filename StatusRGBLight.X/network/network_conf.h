@@ -14,9 +14,9 @@
 
 #if USING_WINC
     #include "network_winc1500.h"
+    #include "winc1500_tcp_server.h"
 #endif
 
-#define TCP_SERVER_PORT       13000 
 
 #endif	/* NETWORK_CONF_H */
 

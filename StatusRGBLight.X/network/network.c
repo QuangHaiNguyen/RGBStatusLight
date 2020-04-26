@@ -1,36 +1,32 @@
 
 #include "network.h"
 
-NetworkIF_t winc1500;
-
-static Network network_list[]= {
+void NetworkIF_Init(NetworkIF_t *interface)
+{
 #if USING_WINC
-    {
-        "winc1500",
-        false,
-        NULL,
-    },
+    interface->Network_Init = WINC1500_Init;
+    interface->Network_DeInit = WINC1500_DeInit;
+    interface->Network_APMode = WINC1500_StartAP;
+    interface->Network_ClientMode = WINC1500_StartClient;
+    interface->Network_EventHandle = WINC1500_EventHandle;
 #endif
-};
-
-Network * const GetNetworkIFList(void)
+}
+void NetworkIF_DeInit(NetworkIF_t *interface)
 {
-    return network_list;
+    interface = NULL;
 }
 
-uint8_t GetNumberOfNetwork(void)
+void Network_TCPServerInit(Network_TCPServer * server)
 {
-    static uint8_t const num_of_IF = sizeof(network_list) / sizeof(*network_list);
-    return num_of_IF;
+#if USING_WINC
+    server->TCPServer_Open = WINC1500_TCPServerOpen;
+    server->TCPServer_Close = WINC1500_TCPServerClose;
+    server->TCPServer_Read = WINC1500_TCPServerRead;
+    server->TCPServer_Write = WINC1500_TCPServerWrite;
+    server->TCPServer_SetCallback = WINC1500_TCPServerSetCallback;
+#endif
 }
-
-void NetworkInit(void)
+void Network_TCPServerDeInit(Network_TCPServer * server)
 {
-    network_list[0].isActive = true;
-    network_list[0].interface = &winc1500;
-    network_list[0].interface ->Network_Init = WINC1500_Init;
-    network_list[0].interface->Network_DeInit = WINC1500_DeInit;
-    network_list[0].interface->Network_APMode = WINC1500_StartAP;
-    network_list[0].interface->Network_ClientMode = WINC1500_StartClient;
-    network_list[0].interface->Network_EventHandle = WINC1500_EventHandle;
+    server = NULL;
 }

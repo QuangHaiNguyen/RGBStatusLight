@@ -118,6 +118,7 @@ int main(void)
 
     /* Replace with your application code */
 #if TEST_NETWORK
+    
     NetworkIF_t * interface;
     interface = (NetworkIF_t*)malloc(sizeof(NetworkIF_t));
     if(interface == NULL){
@@ -126,13 +127,12 @@ int main(void)
     }
     NetworkIF_Init(interface);
     interface->Network_Init();
-    interface->Network_ClientMode();
+    interface->Network_ClientModeStart();
+    
 #endif
     
 #if TEST_TCP
     uint32_t ip;
-   
-    
     server = (Network_TCPServer*)malloc(sizeof(Network_TCPServerInit));
     if(server == NULL){
         PRINT_ERROR("%s", "cannot allocate memory for tcp server\n");
@@ -140,7 +140,7 @@ int main(void)
     }
     Network_TCPServerInit(server);
     server->TCPServer_Open(13000, &r_ptr, &w_ptr,  20, &ip);
-    PRINT_DEBUG("connect to %x\n", ip);
+    
     server->TCPServer_SetCallback(callback);
 #endif
 

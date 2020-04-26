@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['task_5fconfigget_75',['Task_ConfigGet',['../scheduler__conf_8c.html#acd2e1d20d05e592dcf3091d74cfd3068',1,'Task_ConfigGet(void):&#160;scheduler_conf.c'],['../scheduler__conf_8h.html#acd2e1d20d05e592dcf3091d74cfd3068',1,'Task_ConfigGet(void):&#160;scheduler_conf.c']]],
-  ['task_5fnumtasksget_76',['Task_NumTasksGet',['../scheduler__conf_8c.html#aa10f7e7019304f0bae8dd97c0af448f9',1,'Task_NumTasksGet(void):&#160;scheduler_conf.c'],['../scheduler__conf_8h.html#aa10f7e7019304f0bae8dd97c0af448f9',1,'Task_NumTasksGet(void):&#160;scheduler_conf.c']]]
+  ['scheduler_5finit_160',['Scheduler_Init',['../scheduler_8c.html#ac2681c3587521e6e6c58a2201bd3b43a',1,'Scheduler_Init(void):&#160;scheduler.c'],['../scheduler_8h.html#ac2681c3587521e6e6c58a2201bd3b43a',1,'Scheduler_Init(void):&#160;scheduler.c']]],
+  ['scheduler_5frun_161',['Scheduler_Run',['../scheduler_8c.html#a205d6efdbf335f33335b59ba95bbd25b',1,'Scheduler_Run(void):&#160;scheduler.c'],['../scheduler_8h.html#a205d6efdbf335f33335b59ba95bbd25b',1,'Scheduler_Run(void):&#160;scheduler.c']]],
+  ['socket_5fcb_162',['socket_cb',['../winc1500__tcp__server_8c.html#aab87dad6b3d0ff7dedcf8cb0fbadedbf',1,'winc1500_tcp_server.c']]]
 ];

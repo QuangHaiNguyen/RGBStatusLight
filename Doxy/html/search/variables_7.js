@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['rgb_5fbuff_5findex_1468',['RGB_buff_index',['../atmega4808__pwm_8c.html#a253e6ccb51cce502a2c56940bda6730a',1,'atmega4808_pwm.c']]],
-  ['rgb_5fbuff_5fsize_1469',['RGB_buff_size',['../atmega4808__pwm_8c.html#a24fbbb0e1476450558e408c00300d95e',1,'atmega4808_pwm.c']]]
+  ['size_207',['size',['../winc1500__tcp__server_8c.html#aaba88b24a21a6c70c895c0d55f4a69a0',1,'winc1500_tcp_server.c']]],
+  ['status_208',['status',['../network__winc1500_8c.html#a6ddf13eb8f7a8284542ef92b6b817716',1,'status():&#160;network_winc1500.c'],['../winc1500__tcp__server_8c.html#a6603c5707f2cb604650d9fdcf2375858',1,'status():&#160;winc1500_tcp_server.c']]]
 ];

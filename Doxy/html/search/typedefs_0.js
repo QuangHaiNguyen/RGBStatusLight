@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ws2812_5fstatus_96',['WS2812_Status',['../_w_s2812_8h.html#af7ac62ad5c8b1d1369e3f150ad4cf047',1,'WS2812.h']]]
+  ['network_5fstatus_224',['Network_Status',['../network__conf_8h.html#a7f6bf26730251435e791700d0512dac6',1,'network_conf.h']]]
 ];

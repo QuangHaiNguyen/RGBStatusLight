@@ -1,13 +1,14 @@
 var indexSectionsWithContent =
 {
   0: "afilnprstw",
-  1: "t",
-  2: "asw",
-  3: "aistw",
-  4: "filnprt",
-  5: "w",
-  6: "w",
-  7: "r"
+  1: "nt",
+  2: "answ",
+  3: "ainstw",
+  4: "afilnprstw",
+  5: "ntw",
+  6: "ntw",
+  7: "nt",
+  8: "r"
 };
 
 var indexSectionNames =
@@ -19,7 +20,8 @@ var indexSectionNames =
   4: "variables",
   5: "typedefs",
   6: "enums",
-  7: "pages"
+  7: "enumvalues",
+  8: "pages"
 };
 
 var indexSectionLabels =
@@ -31,6 +33,7 @@ var indexSectionLabels =
   4: "Variables",
   5: "Typedefs",
   6: "Enumerations",
-  7: "Pages"
+  7: "Enumerator",
+  8: "Pages"
 };
 

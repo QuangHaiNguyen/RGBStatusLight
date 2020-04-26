@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['rgb_5fbuff_5findex_89',['RGB_buff_index',['../atmega4808__pwm_8c.html#a253e6ccb51cce502a2c56940bda6730a',1,'atmega4808_pwm.c']]],
-  ['rgb_5fbuff_5fsize_90',['RGB_buff_size',['../atmega4808__pwm_8c.html#a24fbbb0e1476450558e408c00300d95e',1,'atmega4808_pwm.c']]]
+  ['pointer_5fto_5frgb_5fbuff_202',['pointer_to_RGB_buff',['../atmega4808__pwm_8c.html#a7bc51507b19d88703d529122b30277a7',1,'atmega4808_pwm.c']]]
 ];

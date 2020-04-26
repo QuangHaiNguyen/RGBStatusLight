@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['socket_1638',['SOCKET',['../group___socket_types.html#ga2faec34c3ab009cb46027b818c0b0d06',1,'socket.h']]]
+  ['tcp_5fserver_5fstatus_225',['TCP_Server_Status',['../network__conf_8h.html#a787d5bb2f7e9bd2cd35d06e82ff94b0a',1,'network_conf.h']]]
 ];

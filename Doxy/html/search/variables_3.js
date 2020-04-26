@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['numtasks_87',['NumTasks',['../scheduler_8c.html#aa515ea09f2b15fb4f559f9eec0d7be4d',1,'scheduler.c']]]
+  ['lasttick_192',['LastTick',['../struct_task__t.html#ad0f25a2cd071bd41eed108947b576ba0',1,'Task_t']]]
 ];

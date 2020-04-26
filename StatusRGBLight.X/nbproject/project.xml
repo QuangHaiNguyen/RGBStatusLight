@@ -15,6 +15,8 @@
             <sourceRootList>
                 <sourceRootElem>scheduler</sourceRootElem>
                 <sourceRootElem>ws2812</sourceRootElem>
+                <sourceRootElem>network</sourceRootElem>
+                <sourceRootElem>utility</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

@@ -9,7 +9,26 @@
 #define WIFI_EN             0
 #define TEST_WS2812         0
 #define TEST_RTC            0
-#define TEST_SCHEDULER      1
+#define TEST_SCHEDULER      0
+#define TEST_NETWORK        1
+#define TEST_RING_BUFF      0
+#define TEST_TCP            1
+
+#if TEST_RING_BUFF
+#include "utility/ring_buffer.h"
+#endif
+
+#if TEST_TCP
+#include "network/network.h"
+void callback(void);
+uint8_t *r_ptr;
+uint8_t *w_ptr;
+Network_TCPServer * server;
+#endif
+
+#if TEST_NETWORK
+#include "network/network.h"
+#endif
 
 #if TEST_SCHEDULER
 #include "scheduler/scheduler.h"
@@ -19,12 +38,6 @@
 #include "atmega4808_rtc.h"
 #endif
 
-#if WIFI_EN
-#include "mcc_generated_files/winc/m2m/m2m_wifi.h"
-#include "mcc_generated_files/winc/m2m/m2m_types.h"
-#include "common/winc_defines.h"
-#include "driver/winc_adapter.h"
-#endif
 
 #if CLI_EN
 #include "cli.h"
@@ -35,10 +48,6 @@
 #include "include/winc_legacy.h"
 #endif
 
-
-#if WIFI_EN
-void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg);
-#endif
 
 #if TEST_WS2812
 void Test_WS2812(void);
@@ -106,37 +115,77 @@ int main(void)
     ATMEGA4808_RTC_Init();
     ATMEGA4808_RTC_Start();
 #endif
-    
-#if WIFI_EN
-    tstrWifiInitParam wifi_param;
-    winc_adapter_init();
-    wifi_param.pfAppWifiCb = Wifi_EventCallback;
 
-    if(!m2m_wifi_init(&wifi_param)){
-        
-        tstrM2MAPConfig apConfig = {
-            "WINC_SSID", // Access Point Name.
-            1, // Channel to use.
-            0, // Wep key index.
-            WEP_40_KEY_STRING_SIZE, // Wep key size.
-            "1234567890", // Wep key.
-            M2M_WIFI_SEC_OPEN, // Security mode.
-            SSID_MODE_VISIBLE, // SSID visible.
-            {192, 168, 1, 1}
-         };
-        
-        m2m_wifi_start_provision_mode(&apConfig, "atmelwincconfig.com", 1);
-    }
-    PRINT_DEBUG("%s", "AP Started\n");
-#endif
     /* Replace with your application code */
+#if TEST_NETWORK
     
+    NetworkIF_t * interface;
+    interface = (NetworkIF_t*)malloc(sizeof(NetworkIF_t));
+    if(interface == NULL){
+        PRINT_ERROR("%s", "cannot allocate memory for wifi interface\n");
+        while(1);
+    }
+    NetworkIF_Init(interface);
+    interface->Network_Init();
+    interface->Network_ClientModeStart();
+    
+#endif
+    
+#if TEST_TCP
+    uint32_t ip;
+    server = (Network_TCPServer*)malloc(sizeof(Network_TCPServerInit));
+    if(server == NULL){
+        PRINT_ERROR("%s", "cannot allocate memory for tcp server\n");
+        while(1);
+    }
+    Network_TCPServerInit(server);
+    server->TCPServer_Open(13000, &r_ptr, &w_ptr,  20, &ip);
+    
+    server->TCPServer_SetCallback(callback);
+#endif
+
+#if TEST_RING_BUFF
+    uint8_t test_read_buff[20] = {0};
+    uint8_t avail_mem;
+    RingBuffer buff;
+    if(BUFF_OK != RingBuffer_Init(&buff, 20))
+    {
+        while(1);
+    }
+    if(BUFF_OK != RingBuffer_Push(&buff, "hello\n", 6))
+    {
+        PRINT_ERROR("%s","buff memory error\n");
+        while(1);
+    }
+    
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+    RingBuffer_Push(&buff, "world\n", 6);
+    
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+    RingBuffer_Pop(&buff, test_read_buff, 6);
+    PRINT_DEBUG("in buffer: %s\n", test_read_buff);
+    
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+    RingBuffer_Pop(&buff, test_read_buff, 6);
+    PRINT_DEBUG("in buffer: %s\n", test_read_buff);
+    
+    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
+    PRINT_DEBUG("available memory: %d\n", avail_mem);
+    
+#endif
     while (1){
+#if TEST_NETWORK
+        interface->Network_EventHandle();
+#endif
+        
 #if TEST_SCHEDULER
         Scheduler_Run();
-#endif
-#if WIFI_EN
-        m2m_wifi_handle_events(NULL);
 #endif
         
 #if CLI_EN
@@ -148,57 +197,6 @@ int main(void)
     }
 }
 
-#if WIFI_EN
-void Wifi_EventCallback(uint8_t u8WiFiEvent, void * pvMsg)
-{
-    tstrM2MProvisionInfo *pstrProvInfo;
-    switch(u8WiFiEvent){
-        case M2M_WIFI_RESP_CON_STATE_CHANGED:
-            {
-                tstrM2mWifiStateChanged *pstrInfo = (tstrM2mWifiStateChanged*)pvMsg;
-                switch(pstrInfo->u8CurrState){
-                    case M2M_WIFI_CONNECTED:
-                        PRINT_DEBUG("%s", "connected\n");
-                        m2m_wifi_get_connection_info(); 
-                    break;
-                    case M2M_WIFI_DISCONNECTED:
-                        PRINT_DEBUG("%s", "disconnected\n");
-                        break;
-                    case M2M_WIFI_ROAMED:
-                        PRINT_DEBUG("%s", "roam to new AP\n");
-                    break;
-                    case M2M_WIFI_UNDEF:
-                        PRINT_DEBUG("%s", "undefined state\n");
-                    break;
-                }
-            }
-            break;
-        case M2M_WIFI_RESP_CONN_INFO:
-            {
-                tstrM2MConnInfo *pstrInfo = (tstrM2MConnInfo*)pvMsg;
-                PRINT_DEBUG("Connected to: %s\n", pstrInfo->acSSID);
-            }
-            break;
-        case M2M_WIFI_RESP_PROVISION_INFO:           
-            pstrProvInfo = (tstrM2MProvisionInfo*)pvMsg;
-            if(pstrProvInfo->u8Status == M2M_SUCCESS){
-                tstrNetworkId strNetworkId = {NULL, pstrProvInfo->au8SSID, (uint8_t)strlen((char*)(pstrProvInfo->au8SSID)), M2M_WIFI_CH_ALL};
-                tstrAuthPsk strAuthPsk = {NULL, pstrProvInfo->au8Password, (uint8_t)strlen((char*)(pstrProvInfo->au8Password))};
-                PRINT_DEBUG("PROV SSID : %s\n",pstrProvInfo->au8SSID);
-                PRINT_DEBUG("PROV PSK  : %s\n",pstrProvInfo->au8Password);
-                m2m_wifi_connect_psk(WIFI_CRED_SAVE_ENCRYPTED, &strNetworkId, &strAuthPsk);
-            }
-            else{
-                PRINT_ERROR("%s", "Provisioning Error\n");
-            }
-            break;
-        
-        default:
-            PRINT_DEBUG("%s", "Unknown/unhandled wifi event\n");
-            break;
-    }
-}
-#endif
 
 #if CLI_EN
 void Test1(void)
@@ -239,6 +237,15 @@ void Test_WS2812(void)
 }
 #endif
 
+#if TEST_TCP
+void callback(void)
+{
+    PRINT_DEBUG("message %s\n", r_ptr);
+    memset(w_ptr, 0, 32);
+    memcpy(w_ptr, "OK\n", 3);
+    WINC1500_TCPServerWrite(32);
+}
+#endif
 
 void UART2_RXCallback(void)
 {

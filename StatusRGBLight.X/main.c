@@ -3,31 +3,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <util/delay.h>
-#include "led.h"
+#include "network/network.h"
 
-#define CLI_EN              0
 #define WIFI_EN             0
 #define TEST_WS2812         0
 #define TEST_RTC            0
 #define TEST_SCHEDULER      0
-#define TEST_NETWORK        1
 #define TEST_RING_BUFF      0
-#define TEST_TCP            1
+
 
 #if TEST_RING_BUFF
 #include "utility/ring_buffer.h"
-#endif
-
-#if TEST_TCP
-#include "network/network.h"
-void callback(void);
-uint8_t *r_ptr;
-uint8_t *w_ptr;
-Network_TCPServer * server;
-#endif
-
-#if TEST_NETWORK
-#include "network/network.h"
 #endif
 
 #if TEST_SCHEDULER
@@ -39,10 +25,6 @@ Network_TCPServer * server;
 #endif
 
 
-#if CLI_EN
-#include "cli.h"
-#endif 
-
 #if TEST_WS2812
 #include "WS2812.h"
 #include "include/winc_legacy.h"
@@ -53,29 +35,27 @@ Network_TCPServer * server;
 void Test_WS2812(void);
 #endif
 
-#if CLI_EN
-static char ch;
-void Test1(void);
-void Test2(void);
-void Test3(void);
-CLI_Status cli_stt;
-command_t cmd_table[3] = {
-        {"test_1", Test1},
-		{"test_2", Test2},
-        {"test_3", Test3},
-};
+typedef enum{
+    INIT = 0,
+    PROVISION,
+    CLIENT,
+    IDLE,
+    ERROR,
+}State;
 
-#endif
+State state = INIT;
 
+NetworkIF_t * interface;
+Network_TCPServer * server;
+uint8_t *r_ptr;
+uint8_t *w_ptr;
+uint32_t ip;
 
 void UART2_RXCallback(void);
 void SW1_InterruptHandler(void);
 void SW0_InterruptHandler(void);
+void callback(void);
 
-uint8_t version;
-uint8_t sub_version;
-uint8_t ssub_version;
-Led_Comp led; 
 bool flag = false;
 /*
     Main application
@@ -87,21 +67,12 @@ int main(void)
     sei();
     PRINT_INFO("%s", "********************************************\n");
     PRINT_INFO("%s", "System initialized\n");
-    USART2_SetISRCb(UART2_RXCallback, USART2_RX_CB);
+    
     
 #if CLI_EN
-    CLI_Init(cmd_table, 3);
-    CLI_GetVersion(&version, &sub_version, &ssub_version);
-    PRINT_INFO("CLI version %02d.%02d.%02d\n", version, sub_version,ssub_version);
+    
 #endif
     
-    LED_Init(&led);
-    led.LED_GetVerion(&version, &sub_version, &ssub_version);
-    PRINT_INFO("LED version %02d.%02d.%02d\n", version, sub_version,ssub_version);
-    PRINT_INFO("number of available Led: %d\n", led.NumOfLed());
-    
-    PORTF_SW1_SetInterruptHandler(SW1_InterruptHandler);
-    PORTF_SW0_SetInterruptHandler(SW0_InterruptHandler);
     
 #if TEST_SCHEDULER
     Scheduler_Init();
@@ -117,32 +88,7 @@ int main(void)
 #endif
 
     /* Replace with your application code */
-#if TEST_NETWORK
-    
-    NetworkIF_t * interface;
-    interface = (NetworkIF_t*)malloc(sizeof(NetworkIF_t));
-    if(interface == NULL){
-        PRINT_ERROR("%s", "cannot allocate memory for wifi interface\n");
-        while(1);
-    }
-    NetworkIF_Init(interface);
-    interface->Network_Init();
-    interface->Network_ClientModeStart();
-    
-#endif
-    
-#if TEST_TCP
-    uint32_t ip;
-    server = (Network_TCPServer*)malloc(sizeof(Network_TCPServerInit));
-    if(server == NULL){
-        PRINT_ERROR("%s", "cannot allocate memory for tcp server\n");
-        while(1);
-    }
-    Network_TCPServerInit(server);
-    server->TCPServer_Open(13000, &r_ptr, &w_ptr,  20, &ip);
-    
-    server->TCPServer_SetCallback(callback);
-#endif
+
 
 #if TEST_RING_BUFF
     uint8_t test_read_buff[20] = {0};
@@ -179,39 +125,31 @@ int main(void)
     PRINT_DEBUG("available memory: %d\n", avail_mem);
     
 #endif
+    interface = (NetworkIF_t*)malloc(sizeof(NetworkIF_t));
+    if(interface == NULL){
+        PRINT_ERROR("%s", "cannot allocate memory for wifi interface\n");
+        state = ERROR;
+    }
+    NetworkIF_Init(interface);
+    interface->Network_Init();
+    interface->Network_ClientModeStart();
+
+    server = (Network_TCPServer*)malloc(sizeof(Network_TCPServerInit));
+    if(server == NULL){
+        PRINT_ERROR("%s", "cannot allocate memory for tcp server\n");
+        state = ERROR;
+    }
+    Network_TCPServerInit(server);
+    server->TCPServer_Open(13000, &r_ptr, &w_ptr,  32, &ip);
+
+    server->TCPServer_SetCallback(callback);
     while (1){
-#if TEST_NETWORK
         interface->Network_EventHandle();
-#endif
-        
-#if TEST_SCHEDULER
-        Scheduler_Run();
-#endif
-        
-#if CLI_EN
-        cli_stt = CLI_ProccessCommand();
-        if(CLI_CMD_NOTFOUND == cli_stt){
-            printf("command not found\r\n");
-        }
-#endif
     }
 }
 
 
-#if CLI_EN
-void Test1(void)
-{
-    PRINT_DEBUG("tick;%d\n", ATMEGA4808_RTC_GetTicks());
-}
-void Test2(void)
-{
-    printf("This is test 2\n");
-}
-void Test3(void)
-{
-    printf("This is test 3\n");
-}
-#endif
+
 
 #if TEST_WS2812
 void Test_WS2812(void)
@@ -237,25 +175,14 @@ void Test_WS2812(void)
 }
 #endif
 
-#if TEST_TCP
+
 void callback(void)
 {
     PRINT_DEBUG("message %s\n", r_ptr);
     memset(w_ptr, 0, 32);
     memcpy(w_ptr, "OK\n", 3);
-    WINC1500_TCPServerWrite(32);
+    server->TCPServer_Write(32);
 }
-#endif
-
-void UART2_RXCallback(void)
-{
-#if CLI_EN
-    ch = USART2.RXDATAL;
-    USART2.TXDATAL = ch;
-    CLI_GetChar(ch);
-#endif
-}
-
 
 void SW1_InterruptHandler(void)
 {

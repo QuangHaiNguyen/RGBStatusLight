@@ -94,6 +94,18 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f7" displayName="application" projectFiles="true">
+        <itemPath>application/command_line_interface.c</itemPath>
+        <itemPath>application/command_line_interface.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f5" displayName="cli" projectFiles="true">
+        <itemPath>cli/cli.c</itemPath>
+        <itemPath>cli/cli.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f6" displayName="led" projectFiles="true">
+        <itemPath>led/led.c</itemPath>
+        <itemPath>led/led.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
@@ -153,10 +165,6 @@
         <itemPath>network/winc1500_tcp_server.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="Scheduler" projectFiles="true">
-        <itemPath>scheduler/Test_Task_1s.c</itemPath>
-        <itemPath>scheduler/Test_Task_1s.h</itemPath>
-        <itemPath>scheduler/Test_Task_2s.c</itemPath>
-        <itemPath>scheduler/Test_Task_2s.h</itemPath>
         <itemPath>scheduler/atmega4808_rtc.c</itemPath>
         <itemPath>scheduler/atmega4808_rtc.h</itemPath>
         <itemPath>scheduler/scheduler.c</itemPath>
@@ -176,12 +184,8 @@
         <itemPath>ws2812/atmega4808_pwm.h</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
-      <itemPath>cli.c</itemPath>
-      <itemPath>cli.h</itemPath>
-      <itemPath>led.h</itemPath>
-      <itemPath>led.c</itemPath>
-      <itemPath>debug.h</itemPath>
       <itemPath>common.h</itemPath>
+      <itemPath>utility/debug.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -195,6 +199,10 @@
     <Elem>ws2812</Elem>
     <Elem>network</Elem>
     <Elem>utility</Elem>
+    <Elem>gpio</Elem>
+    <Elem>cli</Elem>
+    <Elem>led</Elem>
+    <Elem>application</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -236,106 +244,6 @@
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
-      <AVR-AR>
-        <property key="archiver-flags" value="-r"/>
-      </AVR-AR>
-      <AVR-AS>
-        <property key="announce-version" value="false"/>
-        <property key="include-paths" value=""/>
-        <property key="suppress-warnings" value="false"/>
-      </AVR-AS>
-      <AVR-AS-PRE>
-        <property key="announce-version" value="false"/>
-        <property key="include-paths" value=""/>
-        <property key="preprocessor-macros" value=""/>
-        <property key="preprocessor-macros-undefined" value=""/>
-        <property key="suppress-warnings" value="false"/>
-      </AVR-AS-PRE>
-      <AVR-CPP>
-        <property key="additional-warnings" value="true"/>
-        <property key="call-prologues" value="false"/>
-        <property key="default-bitfield-type" value="true"/>
-        <property key="default-char-type" value="true"/>
-        <property key="extra-include-directories" value=""/>
-        <property key="garbage-collect-data" value="true"/>
-        <property key="garbage-collect-functions" value="true"/>
-        <property key="inhibit-all" value="false"/>
-        <property key="make-warnings-into-errors" value="false"/>
-        <property key="no-interrupts" value="false"/>
-        <property key="no-system-directories" value="false"/>
-        <property key="optimization-level" value="-O1"/>
-        <property key="pack-struct" value="true"/>
-        <property key="preprocess-only" value="false"/>
-        <property key="preprocessor-macros" value=""/>
-        <property key="preprocessor-macros-undefined" value=""/>
-        <property key="save-temps" value="false"/>
-        <property key="short-calls" value="false"/>
-        <property key="short-enums" value="true"/>
-        <property key="strict-ansi" value="false"/>
-        <property key="strict-ansi-errors" value="false"/>
-        <property key="support-ansi" value="false"/>
-        <property key="syntax-only" value="false"/>
-        <property key="undefined-identifier" value="false"/>
-        <property key="verbose" value="false"/>
-      </AVR-CPP>
-      <AVR-GCC>
-        <property key="additional-warnings" value="true"/>
-        <property key="call-prologues" value="false"/>
-        <property key="default-bitfield-type" value="true"/>
-        <property key="default-char-type" value="true"/>
-        <property key="extra-include-directories" value=""/>
-        <property key="extra-warnings" value="false"/>
-        <property key="garbage-collect-data" value="true"/>
-        <property key="garbage-collect-functions" value="true"/>
-        <property key="inhibit-all" value="false"/>
-        <property key="make-warnings-into-errors" value="false"/>
-        <property key="no-interrupts" value="false"/>
-        <property key="no-system-directories" value="false"/>
-        <property key="optimization-level" value="-O1"/>
-        <property key="pack-struct" value="true"/>
-        <property key="preprocessor-macros" value=""/>
-        <property key="preprocessor-macros-undefined" value=""/>
-        <property key="save-temps" value="false"/>
-        <property key="short-calls" value="false"/>
-        <property key="short-enums" value="true"/>
-        <property key="strict-ansi" value="false"/>
-        <property key="strict-ansi-errors" value="false"/>
-        <property key="support-ansi" value="false"/>
-        <property key="syntax-only" value="false"/>
-        <property key="undefined-identifier" value="false"/>
-        <property key="verbose" value="false"/>
-      </AVR-GCC>
-      <AVR-Global>
-        <property key="common-include-directories" value=""/>
-        <property key="eep" value="false"/>
-        <property key="external-ram-check" value="false"/>
-        <property key="hex" value="true"/>
-        <property key="lss" value="false"/>
-        <property key="omit-pack-options" value="false"/>
-        <property key="relax-branches" value="false"/>
-        <property key="srec" value="false"/>
-        <property key="user-pack-device-support" value=""/>
-        <property key="user-pack-include" value=""/>
-        <property key="usersig" value="false"/>
-      </AVR-Global>
-      <AVR-LD>
-        <property key="eeprom-segment" value=""/>
-        <property key="exclude-standard-libraries" value="false"/>
-        <property key="extra-lib-directories" value=""/>
-        <property key="flash-segment" value=""/>
-        <property key="generate-map-file" value="true"/>
-        <property key="initial-stack-address" value=""/>
-        <property key="input-libraries" value="libm"/>
-        <property key="no-default-libs" value="false"/>
-        <property key="no-shared-libraries" value="false"/>
-        <property key="no-startup-files" value="false"/>
-        <property key="omit-symbol-information" value="false"/>
-        <property key="other-options" value=""/>
-        <property key="remove-unused-sections" value="true"/>
-        <property key="rodata-writable" value="false"/>
-        <property key="sram-segment" value=""/>
-        <property key="v-printf" value="false"/>
-      </AVR-LD>
       <HI-TECH-COMP>
         <property key="additional-warnings" value="true"/>
         <property key="asmlist" value="true"/>

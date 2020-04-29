@@ -20,9 +20,12 @@ extern "C" {
 #warning a hardware must be choose
 #endif
 
-#include "debug.h"
+#include "utility/debug.h"
 
-    
+uint8_t version;
+uint8_t sub_version;
+uint8_t ssub_version;
+
 #ifdef	__cplusplus
 }
 #endif

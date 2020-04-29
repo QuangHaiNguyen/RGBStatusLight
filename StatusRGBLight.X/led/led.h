@@ -8,7 +8,7 @@
 #ifndef LED_H
 #define	LED_H
 
-#include "common.h"
+#include "../common.h"
 
 typedef enum LED{
     RED_LED =0,

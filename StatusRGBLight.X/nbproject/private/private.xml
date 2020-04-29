@@ -5,7 +5,9 @@
         <group>
             <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/main.c</file>
             <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/network/network_conf.h</file>
+            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/network/winc1500_tcp_server.h</file>
             <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/network/network.h</file>
+            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/network/network_winc1500.c</file>
             <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/network/winc1500_tcp_server.c</file>
         </group>
     </open-files>

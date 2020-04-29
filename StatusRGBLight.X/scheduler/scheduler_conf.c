@@ -21,9 +21,7 @@
 * Includes
 *******************************************************************************/
 #include "scheduler_conf.h"
-#include "Test_Task_1s.h"
-#include "Test_Task_2s.h"
-
+#include "../application/command_line_interface.h"
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -35,8 +33,8 @@
 /** \brief list of tasks the scheduler must run */
 static Task_t Tasks[] =
 {
-	{ INTERVAL_1S,        0, Task_1s       },
-  	{ 2*INTERVAL_1S,      0, Task_2s      },
+	//{ 50* INTERVAL_1MS, 0, Command_Line_Task },
+  	//{ 100 * INTERVAL_1MS, 100, Network            },
 };
 
 /** \brief number of task the scheduler must run */

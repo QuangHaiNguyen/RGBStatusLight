@@ -8,7 +8,7 @@
 #ifndef CLI_H
 #define	CLI_H
 
-#include "common.h"
+#include "../common.h"
 
 typedef enum CLI_STATUS{
     CLI_OK = 0,

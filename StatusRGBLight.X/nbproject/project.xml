@@ -17,6 +17,10 @@
                 <sourceRootElem>ws2812</sourceRootElem>
                 <sourceRootElem>network</sourceRootElem>
                 <sourceRootElem>utility</sourceRootElem>
+                <sourceRootElem>gpio</sourceRootElem>
+                <sourceRootElem>cli</sourceRootElem>
+                <sourceRootElem>led</sourceRootElem>
+                <sourceRootElem>application</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

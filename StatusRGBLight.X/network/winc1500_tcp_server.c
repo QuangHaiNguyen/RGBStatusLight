@@ -11,6 +11,7 @@
 *
 *  Date         Version     Author              Description 
 *  26.04.2020   0.0.99       Quang Hai Nguyen    Initial Release.
+*  01.05.2020   0.0.99       Quang Hai Nguyen    Modify ReOpen function to ErrorHandler function 
 *
 *******************************************************************************/
 /** @file  winc1500_tcp_server.c
@@ -59,7 +60,7 @@ static TCP_Server_Status status;
 * Function Definitions
 *******************************************************************************/
 static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg);
-static TCP_Server_Status WINC1500_TCPServerReOpen(void);
+static void WINC1500_TCPServerErrorHandler(TCP_Server_Status status);
 
 /******************************************************************************
 * Function : WINC1500_TCPServerOpen
@@ -137,19 +138,14 @@ TCP_Server_Status WINC1500_TCPServerOpen( uint16_t port,
     }
 
     /* Bind service*/
-    if (bind(tcp_server_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR){
-        PRINT_ERROR("%s", "socket binding error!\r\n");
-        return TCP_SERVER_OPEN_ERR;
-    }
+    bind(tcp_server_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
     
     //return pointer to ip address, read buffer and write buffer
     *ip = (uint32_t)addr.sin_addr.s_addr;
     *socket_read_data = read_data;
     *socket_write_data = write_data;
     
-    if (SOCK_ERR_NO_ERROR != listen(tcp_server_socket, 0)){
-        return TCP_SERVER_LISTEN_ERR;
-    }
+    
 
     return TCP_SERVER_OK;
 }
@@ -186,12 +182,13 @@ TCP_Server_Status WINC1500_TCPServerOpen( uint16_t port,
 *******************************************************************************/
 TCP_Server_Status WINC1500_TCPServerClose()
 {
-    free(read_data);
-    free(write_data);
     close(tcp_server_socket);
+    close(tcp_client_socket);
     socketDeinit();
     tcp_client_socket = -1;
     tcp_server_socket = -1;
+    free(read_data);
+    free(write_data);
     return TCP_SERVER_OK;
 }
 
@@ -330,7 +327,7 @@ TCP_Server_Status WINC1500_TCPServerSetCallback(TCPServer_cb_t  cb)
 }
 
 /******************************************************************************
-* Function : WINC1500_TCPServerReOpen
+* Function : WINC1500_TCPServerErrorHandler
 *//** 
 * \b Description:
 *
@@ -341,44 +338,56 @@ TCP_Server_Status WINC1500_TCPServerSetCallback(TCPServer_cb_t  cb)
 *
 * POST-CONDITION: None
 * 
-* @param    None
-* @return   TCP server status
+* @param    status: the status of the server (focus only on the error status)
+* @return   None
 *
 *
-* @see WINC1500_TCPServerReOpen
+* @see WINC1500_TCPServerErrorHandler
 *
 * <br><b> - HISTORY OF CHANGES - </b>
 *  
 * <table align="left" style="width:800px">
 * <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
 * <tr><td> 26.04.2020 </td><td> 0.0.99           </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
+* <tr><td> 26.04.2020 </td><td> 0.0.99           </td><td> Quang Hai Nguyen </td><td> Change interface implementation </td></tr>
 * </table><br><br>
 * <hr>
 *
 *******************************************************************************/
-static TCP_Server_Status WINC1500_TCPServerReOpen(void)
+static void WINC1500_TCPServerErrorHandler(TCP_Server_Status status)
 {
-    //must add data validation
-    close(tcp_server_socket);
-    tcp_server_socket = -1;
-    tcp_client_socket = -1;
-    
-    if ((tcp_server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        PRINT_ERROR("%s", "socket create error!\r\n");
-        return TCP_SERVER_OPEN_ERR;
+    switch(status){
+        case TCP_SERVER_OK:
+        case TCP_SERVER_NOT_MEMO:
+        case TCP_SERVER_OPEN_ERR:
+            //do nothing, take care by the application
+            break;
+        case TCP_SERVER_WRITE_ERR:
+            break;
+        case TCP_SERVER_READ_ERR:
+            //take it as disconnect
+            PRINT_DEBUG("%s", "client discconnect\r\n");
+            close(tcp_client_socket);
+            tcp_client_socket = -1;
+            break;
+        case TCP_SERVER_BIND_ERR:
+            PRINT_DEBUG("%s", "socket bind error!\r\n");
+            WINC1500_TCPServerClose();
+            status = TCP_SERVER_BIND_ERR;
+            break;
+        case TCP_SERVER_LISTEN_ERR:
+            PRINT_DEBUG("%s", "socket listen error!\r\n");
+            WINC1500_TCPServerClose();
+            status = TCP_SERVER_LISTEN_ERR;
+            break;
+        case TCP_SERVER_ACCEPT_ERR:
+            PRINT_DEBUG("%s", "socket_cb: accept error!\r\n");
+            close(tcp_client_socket);
+            tcp_client_socket = -1;
+            break;
+        default:
+            break;
     }
-
-    /* Bind service*/
-    if (bind(tcp_server_socket, (struct sockaddr *)&addr, 
-            sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR){
-        PRINT_ERROR("%s", "socket binding error!\r\n");
-        return TCP_SERVER_OPEN_ERR;
-    }
-    
-    if (SOCK_ERR_NO_ERROR != listen(tcp_server_socket, 0)){
-        return TCP_SERVER_LISTEN_ERR;
-    }
-    return TCP_SERVER_OK;
 }
 
 /******************************************************************************
@@ -458,12 +467,9 @@ static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 		tstrSocketBindMsg *pstrBind = (tstrSocketBindMsg *)pvMsg;
 		if (pstrBind && pstrBind->status == 0) {
 			PRINT_DEBUG("%s", "socket bind success!\r\n");
-            status = TCP_SERVER_OK;
             listen(tcp_server_socket, 0);
 		} else {
-			PRINT_DEBUG("%s", "socket bind error!\r\n");
-            status = TCP_SERVER_BIND_ERR;
-            WINC1500_TCPServerReOpen();
+            WINC1500_TCPServerErrorHandler(TCP_SERVER_BIND_ERR);
 		}
 	} break;
 
@@ -472,12 +478,9 @@ static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 		tstrSocketListenMsg *pstrListen = (tstrSocketListenMsg *)pvMsg;
 		if (pstrListen && pstrListen->status == 0) {
 			PRINT_DEBUG("%s", "socket listen success!\r\n");
-            status = TCP_SERVER_OK;
 			accept(tcp_server_socket, NULL, NULL);
 		} else {
-			PRINT_DEBUG("%s", "socket listen error!\r\n");
-            status = TCP_SERVER_LISTEN_ERR;
-            WINC1500_TCPServerReOpen();
+            WINC1500_TCPServerErrorHandler(TCP_SERVER_LISTEN_ERR);
 		}
 	} break;
 
@@ -486,26 +489,17 @@ static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 		tstrSocketAcceptMsg *pstrAccept = (tstrSocketAcceptMsg *)pvMsg;
 		if (pstrAccept) {
 			PRINT_DEBUG("%s", "socket accept success!\r\n");
-			accept(tcp_server_socket, NULL, NULL);
 			tcp_client_socket = pstrAccept->sock;
-            status = TCP_SERVER_OK;
-            if(tcp_client_socket > 0){
-                WINC1500_TCPServerRead(size);
-            }
-            else{
-                PRINT_DEBUG("%s", "socket accept success!\r\n");
-            }
-		} else {
-			PRINT_DEBUG("%s", "socket_cb: accept error!\r\n");
+            WINC1500_TCPServerRead(size);
+		} else {		
             status = TCP_SERVER_ACCEPT_ERR;
-            WINC1500_TCPServerReOpen();
+            WINC1500_TCPServerErrorHandler(status);
 		}
 	} break;
 
 	/* Message send */
 	case SOCKET_MSG_SEND: {
 		PRINT_DEBUG("%s", "socket send success!\r\n");
-        status = TCP_SERVER_OK;
 	} break;
 
 	/* Message receive */
@@ -513,18 +507,14 @@ static void socket_cb(SOCKET sock, uint8_t u8Msg, void *pvMsg)
 		tstrSocketRecvMsg *pstrRecv = (tstrSocketRecvMsg *)pvMsg;
 		if (pstrRecv && pstrRecv->s16BufferSize > 0) {
 			PRINT_DEBUG("%s", "socket recv success!\r\n");
-            status = TCP_SERVER_OK;
             if (read_cb != NULL)
                 (*read_cb)();
             WINC1500_TCPServerRead(size);
 		} else {
-			PRINT_DEBUG("%s", "socket_cb: recv error!\r\n");
-			status = TCP_SERVER_READ_ERR;
-            WINC1500_TCPServerReOpen();
-		}
-	}
+            WINC1500_TCPServerErrorHandler(TCP_SERVER_READ_ERR);
+        }
 	break;
-
+    }
 	default:
 		break;
 	}

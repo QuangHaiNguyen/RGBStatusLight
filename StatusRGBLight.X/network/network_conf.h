@@ -53,12 +53,12 @@ typedef enum TCP_SERVER_STATUS{
     /**< socket send error */
     TCP_SERVER_READ_ERR,
     /**< socket recieve error */
+    TCP_SERVER_ACCEPT_ERR,
+    /**< socket accept error */
     TCP_SERVER_BIND_ERR,
     /**< socket bind error */
     TCP_SERVER_LISTEN_ERR,
     /**< socket listen error */
-    TCP_SERVER_ACCEPT_ERR,
-    /**< socket accept error */
 }TCP_Server_Status;
 
 /**

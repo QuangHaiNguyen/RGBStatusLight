@@ -95,8 +95,6 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f7" displayName="application" projectFiles="true">
-        <itemPath>application/command_line_interface.c</itemPath>
-        <itemPath>application/command_line_interface.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f5" displayName="cli" projectFiles="true">
         <itemPath>cli/cli.c</itemPath>

@@ -4,9 +4,12 @@
 #include <string.h>
 #include <util/delay.h>
 #include "network/network.h"
+#include"cli/cli.h"
+#include "scheduler/atmega4808_rtc.h"
+#include "led/led.h"
+#include "ws2812/WS2812.h"
 
 #define WIFI_EN             0
-#define TEST_WS2812         0
 #define TEST_RTC            0
 #define TEST_SCHEDULER      0
 #define TEST_RING_BUFF      0
@@ -36,27 +39,44 @@ void Test_WS2812(void);
 #endif
 
 typedef enum{
-    INIT = 0,
+    INIT_NETWORK = 0,
+    INIT_TCP_SERVER,
     PROVISION,
     CLIENT,
+    DISCONNET,
     IDLE,
     ERROR,
 }State;
 
-State state = INIT;
+State state = INIT_NETWORK;
 
 NetworkIF_t * interface;
 Network_TCPServer * server;
 uint8_t *r_ptr;
 uint8_t *w_ptr;
+uint8_t sw0_debounce = 0;
+uint8_t sw1_debounce = 0;
 uint32_t ip;
+uint32_t last_tick = 0;
+static char ch;
+CLI_Status cli_stt;
 
 void UART2_RXCallback(void);
 void SW1_InterruptHandler(void);
 void SW0_InterruptHandler(void);
 void callback(void);
+void Test1(void);
+void Test2(void);
+void Test3(void);
+void BlinkBlueLED(void);
 
-bool flag = false;
+
+command_t cmd_table[3] = {
+        {"test_1", Test1},
+		{"test_2", Test2},
+        {"test_3", Test3},
+};
+
 /*
     Main application
 */
@@ -65,6 +85,9 @@ int main(void)
     /* Initializes MCU, drivers and middleware */
     SYSTEM_Initialize();
     sei();
+    USART2_SetISRCb(UART2_RXCallback, USART2_RX_CB);
+    PORTF_SW0_SetInterruptHandler(SW0_InterruptHandler);
+    PORTF_SW1_SetInterruptHandler(SW1_InterruptHandler);
     PRINT_INFO("%s", "********************************************\n");
     PRINT_INFO("%s", "System initialized\n");
     
@@ -125,30 +148,121 @@ int main(void)
     PRINT_DEBUG("available memory: %d\n", avail_mem);
     
 #endif
-    interface = (NetworkIF_t*)malloc(sizeof(NetworkIF_t));
-    if(interface == NULL){
-        PRINT_ERROR("%s", "cannot allocate memory for wifi interface\n");
-        state = ERROR;
+    //Turn of the LED
+    RED_LED_SetLow();
+    GREEN_LED_SetLow();
+    BLUE_LED_SetLow();
+    YELLOW_LED_SetLow();
+    
+    //Turn on system tick
+    ATMEGA4808_RTC_Init();
+    ATMEGA4808_RTC_Start();
+    
+    //Init the CLI
+    CLI_Init(cmd_table, 3);
+    CLI_GetVersion(&version, &sub_version, &ssub_version);
+    PRINT_INFO("CLI version %02d.%02d.%02d\n", version, sub_version,ssub_version);
+    
+    //Init RGB led
+    if(WS2812_OK != WS2812_Init(20)){
+        PRINT_ERROR("%s", "Cannot initialize LED component");
     }
-    NetworkIF_Init(interface);
-    interface->Network_Init();
-    interface->Network_ClientModeStart();
-
-    server = (Network_TCPServer*)malloc(sizeof(Network_TCPServerInit));
-    if(server == NULL){
-        PRINT_ERROR("%s", "cannot allocate memory for tcp server\n");
-        state = ERROR;
-    }
-    Network_TCPServerInit(server);
-    server->TCPServer_Open(13000, &r_ptr, &w_ptr,  32, &ip);
-
-    server->TCPServer_SetCallback(callback);
+    
     while (1){
-        interface->Network_EventHandle();
+        //Handle incomming command
+        cli_stt = CLI_ProccessCommand(); 
+        if(CLI_CMD_NOTFOUND == cli_stt){
+            PRINT_INFO("%s", "command not found\r\n");
+        }
+        
+        //Handle network        
+        switch(state){
+            case INIT_NETWORK: {              
+                interface = (NetworkIF_t*)malloc(sizeof(NetworkIF_t));
+                if(interface == NULL){
+                    PRINT_ERROR("%s", "cannot allocate memory for wifi interface\n");
+                    state = ERROR;
+                }
+                NetworkIF_Init(interface);
+                interface->Network_Init();
+                interface->Network_ClientModeStart();
+                PRINT_INFO("%s", "Network is initialized\n");
+                BLUE_LED_SetLow();
+                state = INIT_TCP_SERVER;
+                break;
+            }
+            case INIT_TCP_SERVER:{
+                server = (Network_TCPServer*)malloc(sizeof(Network_TCPServerInit));
+                if(server == NULL){
+                    PRINT_ERROR("%s", "cannot allocate memory for tcp server\n");
+                    state = ERROR;
+                }
+                Network_TCPServerInit(server);
+                server->TCPServer_Open(13000, &r_ptr, &w_ptr,  32, &ip);
+                server->TCPServer_SetCallback(callback);
+                PRINT_INFO("%s", "TCP server is initialized\n");
+                GREEN_LED_SetLow();
+                state = CLIENT;
+                break;
+            }
+            case PROVISION:{
+                GREEN_LED_SetHigh();
+                interface->Network_ClientModeStop();
+                interface->Network_APMode();
+                state = CLIENT;
+                PRINT_INFO("%s", "Start Provision\n");
+                break;
+            }
+            case CLIENT:{
+                //handle callback
+                interface->Network_EventHandle();
+                BlinkBlueLED();
+                break;
+            }
+            case DISCONNET:
+                //server->TCPServer_Close();
+                WINC1500_TCPServerClose();
+                server->TCPServer_SetCallback(NULL);
+                Network_TCPServerDeInit(server);
+                free(server);
+                interface->Network_ClientModeStop();
+                interface->Network_DeInit();
+                NetworkIF_DeInit(interface);
+                free(interface);
+                PRINT_INFO("%s", "Network is deinitialized\n");
+                BLUE_LED_SetHigh();
+                state = IDLE;
+                break;
+            case IDLE:
+                //idle do nothing
+                break;
+            case ERROR:{
+                break;
+            }
+        }
+        
     }
 }
 
+void Test1(void)
+{
+    PRINT_DEBUG("%s","test 1\n");
+}
+void Test2(void)
+{
+    PRINT_DEBUG("%s","test 1\n");
+}
+void Test3(void)
+{
+    PRINT_DEBUG("%s","test 1\n");
+}
 
+void UART2_RXCallback(void)
+{
+    ch = USART2.RXDATAL;
+    USART2.TXDATAL = ch;
+    CLI_GetChar(ch);
+}
 
 
 #if TEST_WS2812
@@ -175,22 +289,52 @@ void Test_WS2812(void)
 }
 #endif
 
+void BlinkBlueLED(void)
+{
+    if(ATMEGA4808_RTC_GetTicks() - last_tick < 200){
+        
+        BLUE_LED_SetLow();
+    }
+    else if(ATMEGA4808_RTC_GetTicks() - last_tick > 1000){
+        last_tick = ATMEGA4808_RTC_GetTicks();
+    }
+    else{
+        BLUE_LED_SetHigh();
+    }
+}
 
 void callback(void)
 {
-    PRINT_DEBUG("message %s\n", r_ptr);
+    YELLOW_LED_Toggle();
+    PRINT_DEBUG("%d\n",r_ptr[0] );
+    PRINT_DEBUG("%d\n",r_ptr[1] );
+    PRINT_DEBUG("%d\n",r_ptr[2] );
+    WS2812_SetColorAll(r_ptr[0],r_ptr[1],r_ptr[2]);
+    WS2812_Update();
+    state = CLIENT;
     memset(w_ptr, 0, 32);
     memcpy(w_ptr, "OK\n", 3);
-    server->TCPServer_Write(32);
+    WINC1500_TCPServerWrite(32);
 }
 
 void SW1_InterruptHandler(void)
 {
-    //led.LED_SetHigh(BLUE_LED);
+    if(++sw1_debounce > 5){
+        sw1_debounce = 0;
+        if(IDLE == state){
+            state = INIT_NETWORK;
+        }
+        else{
+            state = DISCONNET;
+        }
+    }
 }
 void SW0_InterruptHandler(void)
 {
-    //led.LED_SetLow(BLUE_LED);
+    if(++sw0_debounce > 5){
+        sw0_debounce = 0;
+        state = PROVISION;
+    }
 }
 
 

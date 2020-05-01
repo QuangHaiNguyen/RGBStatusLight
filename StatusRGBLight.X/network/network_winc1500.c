@@ -175,7 +175,7 @@ Network_Status WINC1500_DeInit(void)
 *******************************************************************************/
 Network_Status WINC1500_StartAP(void)
 {
-    if( m2m_wifi_start_provision_mode(&apConfig, "RGBStatus.com", 1) != M2M_SUCCESS){
+    if( m2m_wifi_start_provision_mode(&apConfig, "wincprov.com", 1) != M2M_SUCCESS){
         PRINT_ERROR("%s", "AP Provisioning Mode error");
         return NETWORK_AP_ERR;
     }

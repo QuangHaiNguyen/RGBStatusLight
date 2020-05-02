@@ -277,7 +277,7 @@ TCP_Server_Status WINC1500_TCPServerWrite(uint16_t num_of_byte)
 TCP_Server_Status WINC1500_TCPServerRead(uint16_t num_of_byte)
 {
     //clean up the  buffer before operating
-    memset(read_data, 0, 32);
+    //memset(read_data, 0, 32);
     if(SOCK_ERR_NO_ERROR != recv(tcp_client_socket, read_data, num_of_byte, 0)){
         return TCP_SERVER_READ_ERR;
     }

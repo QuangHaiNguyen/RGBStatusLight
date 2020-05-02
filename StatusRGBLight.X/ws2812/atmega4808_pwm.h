@@ -34,7 +34,7 @@
 //Define length for the PWM duty cycle and period
 #define BIT_1           6   //6 timer ticks x 100ns = 600ns
 #define BIT_0           3   //3 timer ticks x 100ns = 300ns
-#define PERIOD          70  //60 timer ticks x 100ns = 6000ns
+#define PERIOD          70  //70 timer ticks x 100ns = 7000ns
 #define RESET_TIME      3   //3 pulses x 60 timer ticks x 100ns = 18000ns
 
 /******************************************************************************

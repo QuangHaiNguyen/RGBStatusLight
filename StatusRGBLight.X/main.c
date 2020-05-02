@@ -8,35 +8,20 @@
 #include "scheduler/atmega4808_rtc.h"
 #include "led/led.h"
 #include "ws2812/WS2812.h"
-
-#define WIFI_EN             0
-#define TEST_RTC            0
-#define TEST_SCHEDULER      0
-#define TEST_RING_BUFF      0
-
-
-#if TEST_RING_BUFF
-#include "utility/ring_buffer.h"
-#endif
-
-#if TEST_SCHEDULER
-#include "scheduler/scheduler.h"
-#endif
-
-#if TEST_RTC
-#include "atmega4808_rtc.h"
-#endif
-
-
-#if TEST_WS2812
-#include "WS2812.h"
 #include "include/winc_legacy.h"
-#endif
 
+#define SEND_OK()       w_ptr[0] = 0xA7; w_ptr[1] = 0x02; w_ptr[2] = 0x4F; w_ptr[3] = 0x4B;     \
+                        w_ptr[4] = w_ptr[0] + w_ptr[1] + w_ptr[2] + w_ptr[3];                   \
+                        WINC1500_TCPServerWrite(5);
 
-#if TEST_WS2812
-void Test_WS2812(void);
-#endif
+#define SEND_ERR(x)     w_ptr[0] = 0xA8; w_ptr[1] = 0x01; w_ptr[2] = x; \
+                        w_ptr[3] = w_ptr[0] + w_ptr[1] + w_ptr[2];      \
+                        WINC1500_TCPServerWrite(4);
+
+typedef enum{
+    CRC_ERR = 0xB0,
+    WS2812_ERR,
+}Reply;
 
 typedef enum{
     INIT_NETWORK = 0,
@@ -45,8 +30,25 @@ typedef enum{
     CLIENT,
     DISCONNET,
     IDLE,
+    PROCESSING,        
     ERROR,
 }State;
+
+typedef enum{
+    MSG_COLOR_ALL = 0xA0,
+    MSG_COLOR_INDIVI,
+    MSG_COLOR_PATCH,
+    MSG_COLOR_CUSTOM,
+    MSG_HELLO,
+    MSG_INIT,
+    MSG_DEINIT,
+    END_OF_MSG,
+}Opt_Code;
+
+typedef struct{
+    Opt_Code opt_code;
+    void (*function)(uint8_t *msg);
+}MSG_FROM_CLIENT;
 
 State state = INIT_NETWORK;
 
@@ -60,6 +62,7 @@ uint32_t ip;
 uint32_t last_tick = 0;
 static char ch;
 CLI_Status cli_stt;
+WS2812_Status ws2812_status = WS2812_NOT_INIT;
 
 void UART2_RXCallback(void);
 void SW1_InterruptHandler(void);
@@ -70,11 +73,31 @@ void Test2(void);
 void Test3(void);
 void BlinkBlueLED(void);
 
+void MSG_COLOR_ALL_Handle(uint8_t *msg);
+void MSG_COLOR_INDIVI_Handle(uint8_t *msg);
+void MSG_COLOR_PATCH_Handle(uint8_t *msg);
+void MSG_COLOR_CUSTOM_handle(uint8_t *msg);
+void MSG_HELLO_Handle(uint8_t *msg);
+void MSG_INIT_Handle(uint8_t *msg);
+void MSG_DEINIT_Handle(uint8_t *msg);
+bool VerifyCRC(uint8_t *msg);
+void ProcessCommand(void);
 
 command_t cmd_table[3] = {
         {"test_1", Test1},
 		{"test_2", Test2},
         {"test_3", Test3},
+};
+
+const MSG_FROM_CLIENT msg_list[] = {
+    {   MSG_COLOR_ALL,      MSG_COLOR_ALL_Handle},
+    {   MSG_COLOR_INDIVI,   MSG_COLOR_INDIVI_Handle},
+    {   MSG_COLOR_PATCH,    MSG_COLOR_PATCH_Handle},
+    {   MSG_COLOR_CUSTOM,   MSG_COLOR_CUSTOM_handle},
+    {   MSG_HELLO,          MSG_HELLO_Handle},
+    {   MSG_INIT,           MSG_INIT_Handle},
+    {   MSG_DEINIT,         MSG_DEINIT_Handle},
+    {   END_OF_MSG,         NULL},
 };
 
 /*
@@ -92,63 +115,10 @@ int main(void)
     PRINT_INFO("%s", "System initialized\n");
     
     
-#if CLI_EN
-    
-#endif
-    
-    
-#if TEST_SCHEDULER
-    Scheduler_Init();
-#endif
-    
-#if TEST_WS2812
-    Test_WS2812();
-#endif
-
-#if TEST_RTC
-    ATMEGA4808_RTC_Init();
-    ATMEGA4808_RTC_Start();
-#endif
 
     /* Replace with your application code */
 
-
-#if TEST_RING_BUFF
-    uint8_t test_read_buff[20] = {0};
-    uint8_t avail_mem;
-    RingBuffer buff;
-    if(BUFF_OK != RingBuffer_Init(&buff, 20))
-    {
-        while(1);
-    }
-    if(BUFF_OK != RingBuffer_Push(&buff, "hello\n", 6))
-    {
-        PRINT_ERROR("%s","buff memory error\n");
-        while(1);
-    }
-    
-    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
-    PRINT_DEBUG("available memory: %d\n", avail_mem);
-    
-    RingBuffer_Push(&buff, "world\n", 6);
-    
-    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
-    PRINT_DEBUG("available memory: %d\n", avail_mem);
-    
-    RingBuffer_Pop(&buff, test_read_buff, 6);
-    PRINT_DEBUG("in buffer: %s\n", test_read_buff);
-    
-    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
-    PRINT_DEBUG("available memory: %d\n", avail_mem);
-    
-    RingBuffer_Pop(&buff, test_read_buff, 6);
-    PRINT_DEBUG("in buffer: %s\n", test_read_buff);
-    
-    RingBuffer_GetAvailableMemory(&buff, &avail_mem);
-    PRINT_DEBUG("available memory: %d\n", avail_mem);
-    
-#endif
-    //Turn of the LED
+    //Turn off the LED
     RED_LED_SetLow();
     GREEN_LED_SetLow();
     BLUE_LED_SetLow();
@@ -162,11 +132,6 @@ int main(void)
     CLI_Init(cmd_table, 3);
     CLI_GetVersion(&version, &sub_version, &ssub_version);
     PRINT_INFO("CLI version %02d.%02d.%02d\n", version, sub_version,ssub_version);
-    
-    //Init RGB led
-    if(WS2812_OK != WS2812_Init(20)){
-        PRINT_ERROR("%s", "Cannot initialize LED component");
-    }
     
     while (1){
         //Handle incomming command
@@ -233,6 +198,10 @@ int main(void)
                 BLUE_LED_SetHigh();
                 state = IDLE;
                 break;
+            case PROCESSING:
+                
+                state = CLIENT;
+                break;
             case IDLE:
                 //idle do nothing
                 break;
@@ -264,31 +233,6 @@ void UART2_RXCallback(void)
     CLI_GetChar(ch);
 }
 
-
-#if TEST_WS2812
-void Test_WS2812(void)
-{
-    if(WS2812_OK != WS2812_Init(20)){
-        PRINT_ERROR("%s", "Cannot initialize LED component");
-        return;
-    }
-    WS2812_LedOff();
-    WS2812_Update();
-    while(1)
-    {
-        WS2812_SetColorAll(255,0,0);
-        WS2812_Update();
-        DELAY_milliseconds(500);
-        WS2812_SetColorAll(0,255,0);
-        WS2812_Update();
-        DELAY_milliseconds(500);
-        WS2812_SetColorAll(0,0,255);
-        WS2812_Update();
-        DELAY_milliseconds(500);
-    }
-}
-#endif
-
 void BlinkBlueLED(void)
 {
     if(ATMEGA4808_RTC_GetTicks() - last_tick < 200){
@@ -302,19 +246,106 @@ void BlinkBlueLED(void)
         BLUE_LED_SetHigh();
     }
 }
+bool VerifyCRC(uint8_t *msg)
+{
+    uint32_t sum = 0;
+    PRINT_DEBUG("data length: %02x\n", msg[1]);
+    PRINT_DEBUG("CRC: %02x\n", msg[msg[1] + 2]);
+    for (uint16_t i = 0; i < msg[1] + 2; i++)
+    {
+        sum = sum + msg[i];
+    }
+    if((sum & 0xFF) == msg[msg[1] + 2])
+    {
+        PRINT_DEBUG("%s", "CRC correct!\n");
+        return true;
+    }
+    else{
+        PRINT_DEBUG("%s", "CRC wrong!\n");
+        return false;
+    }
+}
+
+void ProcessCommand(void)
+{
+    
+    if(VerifyCRC(r_ptr) == false){
+        SEND_ERR(CRC_ERR);
+        return;
+    }
+        
+    for (uint8_t i = 0; i != END_OF_MSG; i++){
+        if(msg_list[i].opt_code == r_ptr[0]){
+            msg_list[i].function(r_ptr);
+            return;
+        }
+    }
+}
+
+void MSG_COLOR_ALL_Handle(uint8_t *msg)
+{
+    if(ws2812_status != WS2812_OK){
+        SEND_ERR(WS2812_ERR);
+        return;
+    }
+    WS2812_SetColorAll(msg[2], msg[3], msg[4]);
+    WS2812_Update();
+    SEND_OK();
+    
+}
+
+void MSG_COLOR_INDIVI_Handle(uint8_t *msg)
+{
+}
+
+void MSG_COLOR_PATCH_Handle(uint8_t *msg)
+{
+}
+
+void MSG_COLOR_CUSTOM_handle(uint8_t *msg)
+{
+  
+}
+
+void MSG_HELLO_Handle(uint8_t *msg)
+{
+    PRINT_DEBUG("%s", "Got hello msg\n");
+    if(msg[2] != 0x41)
+        return;
+    if(msg[3] != 0x54)
+        return;
+    memset(w_ptr, 0, 32);
+    SEND_OK();
+}
+
+void MSG_INIT_Handle(uint8_t *msg)
+{
+    //Init RGB led
+    if(ws2812_status != WS2812_NOT_INIT){
+        //WS2812 is existing
+        WS2812_DeInit();
+    }
+    
+    ws2812_status = WS2812_Init(msg[2]);
+    if(WS2812_OK != ws2812_status){
+        PRINT_ERROR("%s", "Cannot initialize LED component");
+        SEND_ERR(WS2812_ERR);
+        return;
+    }
+    SEND_OK();
+    return;
+}
+
+void MSG_DEINIT_Handle(uint8_t *msg)
+{
+    WS2812_DeInit();
+    SEND_OK();
+}
 
 void callback(void)
 {
     YELLOW_LED_Toggle();
-    PRINT_DEBUG("%d\n",r_ptr[0] );
-    PRINT_DEBUG("%d\n",r_ptr[1] );
-    PRINT_DEBUG("%d\n",r_ptr[2] );
-    WS2812_SetColorAll(r_ptr[0],r_ptr[1],r_ptr[2]);
-    WS2812_Update();
-    state = CLIENT;
-    memset(w_ptr, 0, 32);
-    memcpy(w_ptr, "OK\n", 3);
-    WINC1500_TCPServerWrite(32);
+    ProcessCommand();
 }
 
 void SW1_InterruptHandler(void)

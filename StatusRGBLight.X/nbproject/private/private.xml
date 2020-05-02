@@ -4,13 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/main.c</file>
-            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/mcc_generated_files/winc/driver/winc_hif.c</file>
-            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/ws2812/WS2812_conf.h</file>
-            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/scheduler/atmega4808_rtc.h</file>
+            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/cli/cli.c</file>
+            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/ws2812/WS2812.h</file>
             <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/ws2812/atmega4808_pwm.h</file>
-            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/led/led.h</file>
-            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/utility/debug.h</file>
-            <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/network/network_winc1500.c</file>
             <file>file:/C:/Users/haing/Nextcloud/My%20Work/ProjectWorkspace/StatusRGBLight/StatusRGBLight.X/network/winc1500_tcp_server.c</file>
         </group>
     </open-files>
